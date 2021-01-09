@@ -40,35 +40,35 @@ class FlagHandler
    {
       if (typeof newEntry !== 'object')
       {
-         throw new Error(`FlagHandler addFlags: 'newEntry' is not an 'object'.`);
+         throw new TypeError(`FlagHandler addFlags: 'newEntry' is not an 'object'.`);
       }
 
       if (typeof newEntry.command !== 'string')
       {
-         throw new Error(`FlagHandler addFlags: 'newEntry.command' is not a 'string'.`);
+         throw new TypeError(`FlagHandler addFlags: 'newEntry.command' is not a 'string'.`);
       }
 
-      if (typeof newEntry.plugin !== 'string')
+      if (typeof newEntry.pluginName !== 'string')
       {
-         throw new Error(`FlagHandler addFlags: 'newEntry.plugin' is not a 'string'.`);
+         throw new TypeError(`FlagHandler addFlags: 'newEntry.pluginName' is not a 'string'.`);
       }
 
       if (typeof newEntry.flags !== 'object')
       {
-         throw new Error(`FlagHandler addFlags: 'newEntry.flags' is not an 'object'.`);
+         throw new TypeError(`FlagHandler addFlags: 'newEntry.flags' is not an 'object'.`);
       }
 
       if (newEntry.verify !== null && newEntry.verify !== undefined)
       {
          if (typeof newEntry.verify !== 'function')
          {
-            throw new Error(`FlagHandler addFlags: 'newEntry.verify' is not a 'function'.`);
+            throw new TypeError(`FlagHandler addFlags: 'newEntry.verify' is not a 'function'.`);
          }
       }
 
       // Store the new entry parameters locally for easier reference.
       const commandName = newEntry.command;
-      const pluginName = newEntry.plugin;
+      const pluginName = newEntry.pluginName;
       const newFlags = newEntry.flags;
       const newVerify = typeof newEntry.verify === 'function' ? newEntry.verify : null;
 
@@ -179,7 +179,7 @@ class FlagHandler
    {
       if (typeof query !== 'object')
       {
-         throw new Error(`FlagHandler getFlags: 'query' is not a 'string'.`);
+         throw new TypeError(`FlagHandler getFlags: 'query' is not a 'string'.`);
       }
 
       // Locally store the command name from query.
@@ -187,7 +187,7 @@ class FlagHandler
 
       if (typeof commandName !== 'string')
       {
-         throw new Error(`FlagHandler getFlags: 'commandName' is not a 'string'.`);
+         throw new TypeError(`FlagHandler getFlags: 'commandName' is not a 'string'.`);
       }
 
       // Retrieve existing command object or create new.
@@ -237,7 +237,7 @@ class FlagHandler
    {
       if (typeof query !== 'object')
       {
-         throw new Error(`FlagHandler verifyFlags: 'query' is not a 'string'.`);
+         throw new TypeError(`FlagHandler verifyFlags: 'query' is not a 'string'.`);
       }
 
       // Locally store query data.
@@ -246,12 +246,12 @@ class FlagHandler
 
       if (typeof commandName !== 'string')
       {
-         throw new Error(`FlagHandler verifyFlags: 'commandName' is not a 'string'.`);
+         throw new TypeError(`FlagHandler verifyFlags: 'commandName' is not a 'string'.`);
       }
 
       if (typeof flags !== 'object')
       {
-         throw new Error(`FlagHandler verifyFlags: 'flags' is not an 'object'.`);
+         throw new TypeError(`FlagHandler verifyFlags: 'flags' is not an 'object'.`);
       }
 
       // Retrieve existing command object or create new.
