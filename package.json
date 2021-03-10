@@ -9,7 +9,8 @@
   "module": "src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./FlagHandler": "./src/flags/FlagHandler.js"
+    "./FlagHandler": "./src/flags/FlagHandler.js",
+    "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js"
   },
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
