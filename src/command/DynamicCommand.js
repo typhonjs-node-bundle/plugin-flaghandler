@@ -4,7 +4,7 @@ import path                from 'path';
 import { Command }         from '@oclif/core';
 import dotenv              from 'dotenv';
 
-import { NonFatalError }   from '../error/NonFatalError.js';
+import { NonFatalError }   from '@typhonjs-oclif/errors';
 
 import FileUtilMod         from 'typhonjs-file-util';
 
