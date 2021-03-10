@@ -12,7 +12,7 @@
  *
  * `typhonjs:oclif:system:flaghandler:verify` -> verifyFlags
  */
-class FlagHandler
+export default class FlagHandler
 {
    /**
     */
@@ -133,7 +133,7 @@ class FlagHandler
             if (newFlag in pluginFlags)
             {
                flagConflictMsg += `Flag '${newFlag}' from '${newPluginName}' already defined by `
-                + `'${pluginName}' plugin for '${commandName}' command.\n`;
+                  + `'${pluginName}' plugin for '${commandName}' command.\n`;
             }
 
             // If an alias is defined for the new flag then iterate over all existing plugin flags to check
@@ -153,7 +153,7 @@ class FlagHandler
                   if (typeof pluginFlagEntry.char === 'string' && pluginFlagEntry.char === newFlagChar)
                   {
                      flagConflictMsg += `Alias '${newFlagChar}' of flag '${newFlag}' from '${newPluginName}' already `
-                     + `defined by '${pluginFlagKey}' flag in '${pluginName}' for '${commandName}' command.\n`;
+                        + `defined by '${pluginFlagKey}' flag in '${pluginName}' for '${commandName}' command.\n`;
                   }
                }
             }
@@ -171,7 +171,7 @@ class FlagHandler
     * Gets associated flags for a particular command name.
     *
     * @param {object}   query - Query object
-    * @param {string}   query.command - Retrieve flags for this command name.
+    * @param {string[]} query.commands - Retrieve flags for this command name.
     *
     * @returns {*|{}}
     */
@@ -183,26 +183,29 @@ class FlagHandler
       }
 
       // Locally store the command name from query.
-      const commandName = query.command;
+      const commands = query.commands;
 
-      if (typeof commandName !== 'string')
+      if (!Array.isArray(commands))
       {
-         throw new TypeError(`FlagHandler getFlags: 'commandName' is not a 'string'.`);
+         throw new TypeError(`FlagHandler getFlags: 'commands' is not a 'Array'.`);
       }
-
-      // Retrieve existing command object or create new.
-      const plugins = this._database[commandName] || {};
-
-      // Retrieve the second keys for plugin names.
-      const pluginNames = Object.keys(plugins);
 
       // Store all flags being returned for this request.
       const allFlags = {};
 
-      // Combine all flags across all plugin names.
-      for (const pluginName of pluginNames)
+      for (const command of commands)
       {
-         Object.assign(allFlags, plugins[pluginName].flags);
+         // Retrieve existing command object or create new.
+         const plugins = this._database[command] || {};
+
+         // Retrieve the second keys for plugin names.
+         const pluginNames = Object.keys(plugins);
+
+         // Combine all flags across all plugin names.
+         for (const pluginName of pluginNames)
+         {
+            Object.assign(allFlags, plugins[pluginName].flags);
+         }
       }
 
       return allFlags;
@@ -240,13 +243,13 @@ class FlagHandler
          throw new TypeError(`FlagHandler verifyFlags: 'query' is not a 'string'.`);
       }
 
-      // Locally store query data.
-      const commandName = query.command;
+      // Locally store the command name & flags from query.
+      const commands = query.commands;
       const flags = query.flags;
 
-      if (typeof commandName !== 'string')
+      if (!Array.isArray(commands))
       {
-         throw new TypeError(`FlagHandler verifyFlags: 'commandName' is not a 'string'.`);
+         throw new TypeError(`FlagHandler verifyFlags: 'commands' is not a 'Array'.`);
       }
 
       if (typeof flags !== 'object')
@@ -254,24 +257,25 @@ class FlagHandler
          throw new TypeError(`FlagHandler verifyFlags: 'flags' is not an 'object'.`);
       }
 
-      // Retrieve existing command object or create new.
-      const plugins = this._database[commandName] || {};
-
-      // Retrieve the second level keys for plugin names.
-      const pluginNames = Object.keys(plugins);
-
-      // Iterate over all plugins and if any verification functions have been provided then invoke them on the
-      // provided flags. Each verification plugin is responsible for throwing an error.
-      for (const pluginName of pluginNames)
+      for (const command of commands)
       {
-         const verifyFunc = plugins[pluginName].verify;
+         // Retrieve existing command object or create new.
+         const plugins = this._database[command] || {};
 
-         if (typeof verifyFunc === 'function')
+         // Retrieve the second level keys for plugin names.
+         const pluginNames = Object.keys(plugins);
+
+         // Iterate over all plugins and if any verification functions have been provided then invoke them on the
+         // provided flags. Each verification plugin is responsible for throwing an error.
+         for (const pluginName of pluginNames)
          {
-            verifyFunc(flags);
+            const verifyFunc = plugins[pluginName].verify;
+
+            if (typeof verifyFunc === 'function')
+            {
+               verifyFunc(flags);
+            }
          }
       }
    }
 }
-
-module.exports = FlagHandler;

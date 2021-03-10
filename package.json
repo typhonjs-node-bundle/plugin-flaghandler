@@ -1,31 +1,40 @@
 {
-  "name": "@typhonjs-node-bundle/plugin-flaghandler",
-  "description": "Provides a TyphonJS plugin to handle dynamic flag registration for Oclif CLIs.",
+  "name": "@typhonjs-oclif/core",
+  "description": "Provides TyphonJS extensions to building Oclif CLIs.",
   "version": "0.0.0",
   "author": "typhonrt",
-  "private": true,
-  "bugs": "https://github.com/typhonjs-node-bundle/issues/issues",
-  "dependencies": {},
+  "bugs": "https://github.com/typhonjs-oclif/core/issues",
+  "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./FlagHandler": "./src/flags/FlagHandler.js"
+  },
+  "dependencies": {
+    "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
+    "cosmiconfig": "^7.0.0",
+    "get-package-type": "^0.1.0",
+    "typhonjs-file-util": "^0.0.11"
+  },
   "devDependencies": {
     "eslint": "^7.0.0",
     "typhonjs-config-eslint": "^0.6.0"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=12.0.0"
   },
   "files": [
     "/npm-shrinkwrap.json",
     "/src"
   ],
-  "homepage": "https://github.com/typhonjs-node-bundle/plugin-flaghandler",
+  "homepage": "https://github.com/typhonjs-oclif/core",
   "keywords": [
     "typhonjs",
     "oclif",
-    "flag",
-    "handler"
+    "core"
   ],
   "license": "MPL-2.0",
-  "main": "src/index.js",
-  "repository": "typhonjs-node-bundle/plugin-flaghandler",
+  "repository": "typhonjs-oclif/core",
   "scripts": {}
 }
