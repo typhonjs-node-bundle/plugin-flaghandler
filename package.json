@@ -14,6 +14,7 @@
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
     "cosmiconfig": "^7.0.0",
+    "dotenv": "^8.0.0",
     "get-package-type": "^0.1.0",
     "typhonjs-file-util": "^0.0.11"
   },
