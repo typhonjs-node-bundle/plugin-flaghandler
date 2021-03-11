@@ -30,10 +30,6 @@ export default async function(opts)
       // A short version of CWD which has the relative path if CWD is the base or subdirectory otherwise absolute.
       globalThis.$$bundler_logCWD = '.';
 
-//TODO
-      // Defines the CLI prefix to add before environment variable flag identifiers.
-      globalThis.$$flag_env_prefix = 'CLI';
-
       // Save the global eventbus.
       globalThis.$$eventbus = new Events();
 
@@ -46,17 +42,11 @@ export default async function(opts)
             name: 'typhonjs-color-logger',
             options: {
                // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
-//TODO
                filterConfigs: [
                   {
                      type: 'exclusive',
                      name: 'FlagHandler',
-                     filterString: '@typhonjs-node-bundle/oclif-commons/src/util/FlagHandler.js'
-                  },
-                  {
-                     type: 'exclusive',
-                     name: '@babel',
-                     filterString: '@babel'
+                     filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
                   }
                ],
                showInfo: false
@@ -73,12 +63,6 @@ export default async function(opts)
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FlagHandler', instance: new FlagHandler() });
-
-
-//TODO
-//      globalThis.$$pluginManager.add({ name: '@typhonjs-fvtt/fvttrepo', instance: FVTTRepo });
-//      globalThis.$$pluginManager.add({ name: '@typhonjs-node-rollup/rollup-runner', instance: new RollupRunner() });
-
    }
    catch (error)
    {
@@ -87,7 +71,7 @@ export default async function(opts)
 }
 
 /**
- * Sets the global name and version number for `fvttdev` in `globalThis.$$cli_name` & `globalThis.$$cli_version`. Also
+ * Sets the global name and version number for the CLI in `globalThis.$$cli_name` & `globalThis.$$cli_version`. Also
  * provides a convenience name + package version string in `globalThis.$$cli_name_version`.
  */
 function s_SET_VERSION()
@@ -96,31 +80,37 @@ function s_SET_VERSION()
 
    const homeDir = os.homedir();
 
+   // Retrieve the local package path to pull the version number for CLI `package.json`.
+   const packagePath = FileUtil.getURLDirpath(import.meta.url, '../../../../../package.json');
+
+   let packageObj;
+
+   try
+   {
+      packageObj = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+   }
+   catch (err)
+   {
+      throw new Error(`Failed to load package.json for CLI from:\n${packagePath}`);
+   }
+
+   if (packageObj.oclif.bin !== 'string')
+   {
+      throw new TypeError(`Failed to load 'oclif.bin' from package.json:\n${packagePath}`);
+   }
+
+   globalThis.$$cli_name = packageObj.oclif.bin;
+   globalThis.$$cli_version = packageObj.version;
+   globalThis.$$cli_name_version = `${packageObj.oclif.bin} (${packageObj.version})`;
+
+   globalThis.$$flag_env_prefix = packageObj.oclif.bin.toUpperCase();
+
+   globalThis.$$eventbus.trigger('log:debug',
+    `setting 'globalThis.$$flag_env_prefix' to '${globalThis.$$flag_env_prefix}'.`);
+
    // Set the log path to be <USER_HOME>/.fvttdev/logs
    globalThis.$$cli_log_dir = `${homeDir}${path.sep}.${globalThis.$$cli_name}${path.sep}logs`;
 
    globalThis.$$eventbus.trigger('log:debug',
     `setting 'globalThis.$$cli_log_dir' to '${globalThis.$$cli_log_dir}'.`);
-
-   // Retrieve the local package path to pull the version number for `fvttdev`
-   const packagePath = FileUtil.getURLDirpath(import.meta.url, '../../../../../package.json');
-
-   try
-   {
-      // require(packagePath);
-      const packageObj = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-
-      if (packageObj)
-      {
-         globalThis.$$cli_name = packageObj.name;
-         globalThis.$$cli_version = packageObj.version;
-         globalThis.$$cli_name_version = `${packageObj.name} (${packageObj.version})`;
-
-         globalThis.$$flag_env_prefix = packageObj.name.toUpperCase();
-
-         globalThis.$$eventbus.trigger('log:debug',
-          `setting 'globalThis.$$flag_env_prefix' to '${globalThis.$$flag_env_prefix}'.`);
-      }
-   }
-   catch (err) { /* nop */ }
 }
