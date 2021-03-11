@@ -9,16 +9,20 @@
   "module": "src/index.js",
   "exports": {
     ".": "./src/index.js",
+    "./FileUtil": "./src/file/FileUtil.js",
     "./FlagHandler": "./src/flags/FlagHandler.js",
-    "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js"
+    "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",
+    "./hooks/init": "./src/hooks/init.js"
   },
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
     "@typhonjs-oclif/errors": "^0.0.0",
+    "backbone-esnext-events": "^0.3.0",
     "cosmiconfig": "^7.0.0",
     "dotenv": "^8.0.0",
     "get-package-type": "^0.1.0",
-    "typhonjs-file-util": "^0.0.11"
+    "typhonjs-file-util": "^0.0.11",
+    "typhonjs-plugin-manager": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "^7.0.0",
