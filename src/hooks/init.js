@@ -94,7 +94,7 @@ function s_SET_VERSION()
       throw new Error(`Failed to load package.json for CLI from:\n${packagePath}`);
    }
 
-   if (packageObj.oclif.bin !== 'string')
+   if (typeof packageObj.oclif.bin !== 'string')
    {
       throw new TypeError(`Failed to load 'oclif.bin' from package.json:\n${packagePath}`);
    }
