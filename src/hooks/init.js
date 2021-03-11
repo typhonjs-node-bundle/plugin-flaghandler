@@ -9,8 +9,7 @@ import FileUtil          from '../file/FileUtil.js';
 
 import FlagHandler       from '../flags/FlagHandler.js';
 
-// TODO CHANGE TO 'info' LOG LEVEL FOR DEFAULT
-const s_DEFAULT_LOG_LEVEL = 'debug';
+const s_DEFAULT_LOG_LEVEL = 'info';
 
 /**
  * Creates a plugin manager instance.
@@ -24,11 +23,13 @@ export default async function(opts)
 {
    try
    {
+      const logLevel = opts.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
+
       // Save base executing path immediately before anything else occurs w/ CLI / Oclif.
-      globalThis.$$bundler_baseCWD = globalThis.$$bundler_origCWD = process.cwd();
+      globalThis.$$cli_baseCWD = globalThis.$$cli_origCWD = process.cwd();
 
       // A short version of CWD which has the relative path if CWD is the base or subdirectory otherwise absolute.
-      globalThis.$$bundler_logCWD = '.';
+      globalThis.$$cli_logCWD = '.';
 
       // Save the global eventbus.
       globalThis.$$eventbus = new Events();
@@ -54,7 +55,7 @@ export default async function(opts)
          });
 
       // Set the initial starting log level.
-      globalThis.$$eventbus.trigger('log:level:set', s_DEFAULT_LOG_LEVEL);
+      globalThis.$$eventbus.trigger('log:level:set', logLevel);
 
       globalThis.$$eventbus.trigger('log:debug', `TyphonJS CLI init hook running '${opts.id}'.`);
 
@@ -103,14 +104,14 @@ function s_SET_VERSION()
    globalThis.$$cli_version = packageObj.version;
    globalThis.$$cli_name_version = `${packageObj.oclif.bin} (${packageObj.version})`;
 
-   globalThis.$$flag_env_prefix = packageObj.oclif.bin.toUpperCase();
+   globalThis.$$cli_env_prefix = packageObj.oclif.bin.toUpperCase();
 
    globalThis.$$eventbus.trigger('log:debug',
-    `setting 'globalThis.$$flag_env_prefix' to '${globalThis.$$flag_env_prefix}'.`);
+    `setting environment variable prefix to '${globalThis.$$cli_env_prefix}'.`);
 
    // Set the log path to be <USER_HOME>/.fvttdev/logs
    globalThis.$$cli_log_dir = `${homeDir}${path.sep}.${globalThis.$$cli_name}${path.sep}logs`;
 
    globalThis.$$eventbus.trigger('log:debug',
-    `setting 'globalThis.$$cli_log_dir' to '${globalThis.$$cli_log_dir}'.`);
+    `setting log directory to '${globalThis.$$cli_log_dir}'.`);
 }

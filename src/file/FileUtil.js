@@ -288,7 +288,7 @@ export default class FileUtil
 
       // Define to cosmiconfig options. Stop at the original CWD.
       const cosmicOptions = {
-         stopDir: global.$$bundler_origCWD,
+         stopDir: global.$$cli_origCWD,
          loaders,
          searchPlaces: searchPlacesMerge
       }
@@ -299,7 +299,7 @@ export default class FileUtil
 
       try
       {
-         result = await explorer.search(global.$$bundler_baseCWD);
+         result = await explorer.search(global.$$cli_baseCWD);
       }
       catch(error)
       {
@@ -316,7 +316,7 @@ export default class FileUtil
          filepath: result.filepath,
          filename: path.basename(result.filepath),
          extension: path.extname(result.filepath).toLowerCase(),
-         relativePath: FileUtil.getRelativePath(global.$$bundler_baseCWD, result.filepath)
+         relativePath: FileUtil.getRelativePath(global.$$cli_baseCWD, result.filepath)
       }
    }
 

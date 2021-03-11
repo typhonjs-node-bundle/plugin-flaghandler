@@ -111,9 +111,9 @@ export default class DynamicCommand extends Command
       if (typeof existingFlags.env === 'string')
       {
          // By default the environment variables will always be stored in `./env`
-         const envFilePath = `${globalThis.$$bundler_baseCWD}${path.sep}env${path.sep}${existingFlags.env}.env`;
+         const envFilePath = `${globalThis.$$cli_baseCWD}${path.sep}env${path.sep}${existingFlags.env}.env`;
 
-         const logEnvFilePath = `${globalThis.$$bundler_logCWD}${path.sep}env${path.sep}${existingFlags.env}.env`;
+         const logEnvFilePath = `${globalThis.$$cli_logCWD}${path.sep}env${path.sep}${existingFlags.env}.env`;
 
          // Exit gracefully if the environment file could not be found.
          if (!fs.existsSync(envFilePath))
@@ -165,7 +165,7 @@ export default class DynamicCommand extends Command
       if (event !== null)
       {
          this._commandData = await globalThis.$$eventbus.triggerAsync(event, this._cliFlags,
-          globalThis.$$bundler_baseCWD, globalThis.$$bundler_origCWD);
+          globalThis.$$cli_baseCWD, globalThis.$$cli_origCWD);
       }
 
       // Handle noop / no operation flag / Exit out now!
@@ -218,19 +218,19 @@ export default class DynamicCommand extends Command
       // Notify that the current working directory is being changed and verify that the new directory exists.
       if (typeof flags.cwd === 'string' && flags.cwd !== '.')
       {
-         const origCWD = globalThis.$$bundler_baseCWD;
+         const origCWD = globalThis.$$cli_baseCWD;
          const newCWD = flags.cwd;
 
          // Perform any initialization after initial flags have been loaded. Handle defining `cwd` and verify.
-         globalThis.$$bundler_baseCWD = path.resolve(globalThis.$$bundler_origCWD, newCWD);
+         globalThis.$$cli_baseCWD = path.resolve(globalThis.$$cli_origCWD, newCWD);
 
          // Only log absolute path if the CWD location is outside of the original path.
-         globalThis.$$bundler_logCWD = newCWD.startsWith(origCWD) ? path.relative(origCWD, newCWD) : newCWD;
+         globalThis.$$cli_logCWD = newCWD.startsWith(origCWD) ? path.relative(origCWD, newCWD) : newCWD;
 
          globalThis.$$eventbus.trigger('log:verbose',
-          `New current working directory set: \n${globalThis.$$bundler_logCWD}`);
+          `New current working directory set: \n${globalThis.$$cli_logCWD}`);
 
-         if (!fs.existsSync(globalThis.$$bundler_baseCWD))
+         if (!fs.existsSync(globalThis.$$cli_baseCWD))
          {
             throw new NonFatalError(`New current working directory does not exist.`);
          }
