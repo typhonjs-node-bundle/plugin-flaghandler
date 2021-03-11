@@ -1,21 +1,23 @@
-import fs                from 'fs';
+import fs                  from 'fs';
 
-import { NonFatalError } from '@typhonjs-oclif/errors';
+import { NonFatalError }   from '@typhonjs-oclif/errors';
 
-import LoggerMod         from 'typhonjs-color-logger';
-import PackageUtilMod    from 'typhonjs-package-util';
-
-import { Errors }        from '@oclif/core';
+import LoggerMod           from 'typhonjs-color-logger';
+import PackageUtilMod      from 'typhonjs-package-util';
 
 const logger = LoggerMod.default;
 const PackageUtil = PackageUtilMod.default;
 
 /**
- *
  * @param {Error} error - Error to handle / log.
+ *
+ * @param {Errors} Errors - @oclif/core Errors instance.
+ *
+ * @param {object} match - An object containing match data.
+ *
  * @returns {*}
  */
-export default function errorHandler(error)
+export default function errorHandler({ error, Errors, match } = {})
 {
    // Given a magic boolean variable assigned to an error skip printing out a fatal error.
    if (error instanceof NonFatalError || (typeof error.$$error_fatal === 'boolean' && !error.$$error_fatal))
@@ -45,7 +47,7 @@ export default function errorHandler(error)
    // a catch all error handler for the whole CLI we'll only post detailed error messages for non Oclif packages
    // detected where a `package.json` file can be found.
    if (packageData !== null && typeof packageData === 'object' && typeof packageData.name === 'string' &&
-      !packageData.name.startsWith('@oclif'))
+    !packageData.name.startsWith('@oclif'))
    {
       s_PRINT_ERR_MESSAGE(packageData, error);
    }
@@ -127,7 +129,7 @@ function s_PRINT_ERR_MESSAGE(packageData, error)
    if (typeof packageData === 'object')
    {
       const sep =
-         '-----------------------------------------------------------------------------------------------\n';
+       '-----------------------------------------------------------------------------------------------\n';
 
       // Create a specific message if the module is detected as a TJSDoc module.
 
@@ -136,21 +138,21 @@ function s_PRINT_ERR_MESSAGE(packageData, error)
       if (packageData.bugs.url === 'https://github.com/typhonjs-fvtt/fvttdev/issues')
       {
          packageMessage = 'An uncaught fatal error has been detected with FVTTDev CLI.\n'
-            + 'Please report this error to the issues forum after checking if a similar '
-            + 'report already exists:\n' + sep;
+          + 'Please report this error to the issues forum after checking if a similar '
+           + 'report already exists:\n' + sep;
       }
       else if (packageData.bugs.url === 'https://github.com/typhonjs-oclif/issues/issues' ||
-         packageData.bugs.url === 'https://github.com/typhonjs-node-rollup/issues/issues')
+       packageData.bugs.url === 'https://github.com/typhonjs-node-rollup/issues/issues')
       {
          packageMessage = 'An uncaught fatal error has been detected with a TyphonJS Oclif module.\n'
-            + 'Please report this error to the issues forum after checking if a similar '
-            + 'report already exists:\n' + sep;
+          + 'Please report this error to the issues forum after checking if a similar '
+           + 'report already exists:\n' + sep;
       }
       else
       {
          packageMessage = 'An uncaught fatal error has been detected with an external module.\n'
-            + 'This may be a valid runtime error, but consider reporting this error to any issues forum after '
-            + 'checking if a similar report already exists:\n' + sep;
+          + 'This may be a valid runtime error, but consider reporting this error to any issues forum after '
+           + 'checking if a similar report already exists:\n' + sep;
       }
 
       /* eslint-enable prefer-template */
