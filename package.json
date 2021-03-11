@@ -9,6 +9,7 @@
   "module": "src/index.js",
   "exports": {
     ".": "./src/index.js",
+    "./errorHandler": "./src/errors/errorHandler.js",
     "./FileUtil": "./src/file/FileUtil.js",
     "./FlagHandler": "./src/flags/FlagHandler.js",
     "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",
@@ -21,7 +22,9 @@
     "cosmiconfig": "^7.0.0",
     "dotenv": "^8.0.0",
     "get-package-type": "^0.1.0",
+    "typhonjs-color-logger": "^0.0.13",
     "typhonjs-file-util": "^0.0.11",
+    "typhonjs-package-util": "^0.0.3",
     "typhonjs-plugin-manager": "^0.2.0"
   },
   "devDependencies": {

@@ -38,21 +38,20 @@ export default async function(opts)
       globalThis.$$pluginManager = new PluginManager({ eventbus: globalThis.$$eventbus });
 
       // Adds color logger plugin
-      globalThis.$$pluginManager.add(
-         {
-            name: 'typhonjs-color-logger',
-            options: {
-               // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
-               filterConfigs: [
-                  {
-                     type: 'exclusive',
-                     name: 'FlagHandler',
-                     filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
-                  }
-               ],
-               showInfo: false
-            }
-         });
+      globalThis.$$pluginManager.add({
+         name: 'typhonjs-color-logger',
+         options: {
+            // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
+            filterConfigs: [
+               {
+                  type: 'exclusive',
+                  name: 'FlagHandler',
+                  filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
+               }
+            ],
+            showInfo: false
+         }
+      });
 
       // Set the initial starting log level.
       globalThis.$$eventbus.trigger('log:level:set', logLevel);
