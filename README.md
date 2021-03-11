@@ -1,2 +1,2 @@
-# plugin-flaghandler
-Provides a TyphonJS plugin to handle dynamic flag registration for Oclif CLIs.
+# @typhonjs-oclif/core
+Provides TyphonJS extensions to building Oclif CLIs.
