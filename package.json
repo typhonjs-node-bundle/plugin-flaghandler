@@ -28,8 +28,8 @@
     "typhonjs-plugin-manager": "^0.2.0"
   },
   "devDependencies": {
-    "eslint": "^7.0.0",
-    "typhonjs-config-eslint": "^0.6.0"
+    "@typhonjs-config/eslint-config": "^0.1.0",
+    "eslint": "^7.0.0"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -47,5 +47,7 @@
   ],
   "license": "MPL-2.0",
   "repository": "typhonjs-oclif/core",
-  "scripts": {}
+  "scripts": {
+    "eslint": "eslint ."
+  }
 }

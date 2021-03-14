@@ -4,22 +4,24 @@ import indent           from 'indent-string';
 import stripAnsi        from 'strip-ansi';
 import wrap             from 'wrap-ansi';
 
-import CommandHelp      from '@oclif/core/lib/help/command.js'
-import { renderList }   from '@oclif/core/lib/help/list.js'
-import RootHelp         from '@oclif/core/lib/help/root.js'
-import { stdtermwidth } from '@oclif/core/lib/help/screen.js'
-import { template }     from '@oclif/core/lib/help/util.js'
-import { compact, sortBy, uniqBy } from '@oclif/core/lib/util.js'
+import CommandHelp      from '@oclif/core/lib/help/command.js';
+import { renderList }   from '@oclif/core/lib/help/list.js';
+import RootHelp         from '@oclif/core/lib/help/root.js';
+import { stdtermwidth } from '@oclif/core/lib/help/screen.js';
+import { template }     from '@oclif/core/lib/help/util.js';
+import { compact, sortBy, uniqBy } from '@oclif/core/lib/util.js';
 
 const {
    bold,
 } = chalk
 
-const ROOT_INDEX_CMD_ID = ''
+const ROOT_INDEX_CMD_ID = '';
 
 /**
  *
+ *
  * @param {string[]} args
+ *
  * @returns {string, *}
  */
 function getHelpSubject(args)

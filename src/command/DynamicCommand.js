@@ -51,6 +51,13 @@ export default class DynamicCommand extends Command
    /**
     * Loads all dynamic flags for this command after running any init hook.
     *
+    * @param {Object}   CommandClass - The DynamicCommand subclass.
+    *
+    * @param {Object}   config - An Oclif config.
+    *
+    * @param {boolean}  [loadDefault=true] - A boolean indicating whether to load defaults or current environment
+    *                                        variables.
+    *
     * @returns {Promise<{}>}
     */
    static async loadDynamicFlags(CommandClass, config, loadDefault = true)
@@ -96,6 +103,7 @@ export default class DynamicCommand extends Command
     * `this.parse(BuildCommand)`.
     *
     * @param {object}   existingFlags - parsed flags from command.
+    *
     * @param {object}   CommandClass - The actual child command class.
     *
     * @returns {object} Either the existing flags if there is no .env file to load or the new flags after new
@@ -145,8 +153,10 @@ export default class DynamicCommand extends Command
    /**
     * Performs all initialization, loading of flags from *.env file via dotenv and verification of flags.
     *
-    * @param {object}   options -
+    * @param {object}   options - Options object.
+    *
     * @param {string[]} options.commands - The actual command names.
+    *
     * @param {string}   options.event - The event to fire with parsed flags to load command data.
     *
     * @return {object} Parsed and verified flags.
@@ -257,8 +267,7 @@ export default class DynamicCommand extends Command
 
    /**
     * Writes out a time stamped compressed file including the CLI config, CLI flags, CLI command data to users home
-    * directory:
-    * `~/fvttdev`
+    * directory.
     *
     * @private
     */

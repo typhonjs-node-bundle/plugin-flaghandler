@@ -12,8 +12,7 @@ import FlagHandler       from '../flags/FlagHandler.js';
 const s_DEFAULT_LOG_LEVEL = 'info';
 
 /**
- * Creates a plugin manager instance.
- * Attaches the backbone-esnext eventbus to `process`.
+ * Initializes a TyphonJS CLI with a plugin manager and eventbus and several default plugins.
  *
  * @param {object} opts - options of the CLI action.
  *
@@ -108,9 +107,8 @@ function s_SET_VERSION()
    globalThis.$$eventbus.trigger('log:debug',
     `setting environment variable prefix to '${globalThis.$$cli_env_prefix}'.`);
 
-   // Set the log path to be <USER_HOME>/.fvttdev/logs
+   // Set the log path to be <USER_HOME>/.<CLI bin name>/logs
    globalThis.$$cli_log_dir = `${homeDir}${path.sep}.${globalThis.$$cli_name}${path.sep}logs`;
 
-   globalThis.$$eventbus.trigger('log:debug',
-    `setting log directory to '${globalThis.$$cli_log_dir}'.`);
+   globalThis.$$eventbus.trigger('log:debug', `setting log directory to '${globalThis.$$cli_log_dir}'.`);
 }

@@ -31,9 +31,13 @@ export default class FlagHandler
     * Adds new flags, but posts warnings if there are existing flags w/ the same name.
     *
     * @param {object}   newEntry - object defining command name, plugin name, and associated flags
+    *
     * @param {string}   newEntry.command - The command name to store the flags.
+    *
     * @param {string}   newEntry.plugin - The plugin name.
+    *
     * @param {object}   newEntry.flags - new flags to add.
+    *
     * @param {function} [newEntry.verify] - An optional function invoked to verify flags set by the given plugin.
     */
    addFlags(newEntry = {})
@@ -90,7 +94,9 @@ export default class FlagHandler
     * Checks if there are existing command / plugin flags that conflict with new flags being added.
     *
     * @param {string}   commandName - the name of the command
+    *
     * @param {string}   newPluginName - the name of the plugin for new flags attempting to be added.
+    *
     * @param {object}   newPluginFlags - new plugin flags to add.
     *
     * @throws {Error}   Throws an Error if conflict is detected
@@ -132,8 +138,8 @@ export default class FlagHandler
             // already existing in the DB.
             if (newFlag in pluginFlags)
             {
-               flagConflictMsg += `Flag '${newFlag}' from '${newPluginName}' already defined by `
-                  + `'${pluginName}' plugin for '${commandName}' command.\n`;
+               flagConflictMsg += `Flag '${newFlag}' from '${newPluginName}' already defined by ` +
+                `'${pluginName}' plugin for '${commandName}' command.\n`;
             }
 
             // If an alias is defined for the new flag then iterate over all existing plugin flags to check
@@ -152,8 +158,8 @@ export default class FlagHandler
                   // An shorthand alias conflict is potentially found. If so add a conflict message.
                   if (typeof pluginFlagEntry.char === 'string' && pluginFlagEntry.char === newFlagChar)
                   {
-                     flagConflictMsg += `Alias '${newFlagChar}' of flag '${newFlag}' from '${newPluginName}' already `
-                        + `defined by '${pluginFlagKey}' flag in '${pluginName}' for '${commandName}' command.\n`;
+                     flagConflictMsg += `Alias '${newFlagChar}' of flag '${newFlag}' from '${newPluginName}' already ` +
+                      `defined by '${pluginFlagKey}' flag in '${pluginName}' for '${commandName}' command.\n`;
                   }
                }
             }
@@ -171,6 +177,7 @@ export default class FlagHandler
     * Gets associated flags for a particular command name.
     *
     * @param {object}   query - Query object
+    *
     * @param {string[]} query.commands - Retrieve flags for this command name.
     *
     * @returns {*|{}}
@@ -233,7 +240,9 @@ export default class FlagHandler
     * Invokes any stored Oclif plugin verification functions against the final command flags.
     *
     * @param {object}   query - Query object
+    *
     * @param {string}   query.command - Retrieve flags for this command name.
+    *
     * @param {object}   query.flags - Parsed flags for a command.
     */
    verifyFlags(query = {})

@@ -6,14 +6,13 @@ import { cosmiconfig }   from 'cosmiconfig';
 
 import esmLoader         from './esmLoader.js';
 
-const s_EXT_JS = new Map([['.js', 1], ['.jsx', 1], ['.es6', 1], ['.es', 1], ['.mjs', 1]]);
-const s_EXT_TS = new Map([['.ts', 1], ['.tsx', 1]]);
+const s_EXT_JS = new Set(['.js', '.jsx', '.es6', '.es', '.mjs']);
+const s_EXT_TS = new Set(['.ts', '.tsx']);
 
-const s_BABEL_CONFIG = new Map([['.babelrc', 1], ['.babelrc.cjs', 1], ['.babelrc.js', 1], ['.babelrc.mjs', 1],
- ['.babelrc.json', 1], ['babel.config.cjs', 1], ['babel.config.js', 1], ['babel.config.json', 1],
-  ['babel.config.mjs', 1]]);
+const s_BABEL_CONFIG = new Set(['.babelrc', '.babelrc.cjs', '.babelrc.js', '.babelrc.mjs', '.babelrc.json',
+ 'babel.config.cjs', 'babel.config.js', 'babel.config.json', 'babel.config.mjs']);
 
-const s_TSC_CONFIG = new Map([['tsconfig.json', 1], ['jsconfig.json', 1]]);
+const s_TSC_CONFIG = new Set(['tsconfig.json', 'jsconfig.json']);
 
 /**
  * Defines the default configuration file locations `cosmiconfig`.
@@ -51,7 +50,9 @@ export default class FileUtil
     * Returns an array of all directories found from walking the directory tree provided.
     *
     * @param {string}   dir - Directory to walk.
+    *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    *
     * @param {Array}    [results] - Output array.
     *
     * @returns {Promise<Array>}
@@ -70,7 +71,9 @@ export default class FileUtil
     * Returns an array of all files found from walking the directory tree provided.
     *
     * @param {string}   dir - Directory to walk.
+    *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    *
     * @param {Array}    [results] - Output array.
     *
     * @returns {Promise<Array>}
@@ -89,10 +92,11 @@ export default class FileUtil
     * Given a base path and a file path this method will return a relative path if the file path includes the base
     * path otherwise the full absolute file path is returned.
     *
-    * @param basePath
-    * @param filePath
+    * @param {string}   basePath - The base file path to create a relative path from `filePath`
     *
-    * @returns {string|string}
+    * @param {string}   filePath - The relative path to adjust from `basePath`.
+    *
+    * @returns {string}
     */
    static getRelativePath(basePath, filePath)
    {
@@ -140,6 +144,7 @@ export default class FileUtil
     * immediately returned.
     *
     * @param {string}   dir - Directory to walk.
+    *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
     *
     * @returns {Promise<boolean>} Whether a Babel configuration file was found.
@@ -162,6 +167,7 @@ export default class FileUtil
     * immediately returned.
     *
     * @param {string}   dir - Directory to walk.
+    *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
     *
     * @returns {Promise<boolean>} Whether a Typescript configuration file was found.
@@ -227,7 +233,7 @@ export default class FileUtil
     * `${moduleName}.config.yaml`,
     * `${moduleName}.config.yml`
     *
-    * @param {object}   options
+    * @param {object}   options - Options object
     *
     * @param {string}   options.moduleName - The module name to load a config file.
     *
@@ -246,7 +252,7 @@ export default class FileUtil
       if (typeof options.moduleName !== 'string') { throw new TypeError(`'options.moduleName' is not a 'string'`); }
 
       const moduleName = options.moduleName;
-      const packageName = typeof options.packageName === 'string' ? `${options.packageName}: `: '';
+      const packageName = typeof options.packageName === 'string' ? `${options.packageName}: ` : '';
       const mergeExternal = typeof options.mergeExternal === 'boolean' ? options.mergeExternal : true;
 
       // Make a request for any externally provided cosmiconfig plugin support.
@@ -264,7 +270,7 @@ export default class FileUtil
 
       // Merge results -------------------
 
-      const searchPlacesMerge = Array.isArray(options.searchPlaces) ? searchPlaces :
+      const searchPlacesMerge = Array.isArray(options.searchPlaces) ? options.searchPlaces :
        s_DEFAULT_COSMIC_SEARCHPLACES(moduleName);
 
       let loaders = {
@@ -291,7 +297,7 @@ export default class FileUtil
          stopDir: global.$$cli_origCWD,
          loaders,
          searchPlaces: searchPlacesMerge
-      }
+      };
 
       const explorer = cosmiconfig(moduleName, cosmicOptions);
 
@@ -301,7 +307,7 @@ export default class FileUtil
       {
          result = await explorer.search(global.$$cli_baseCWD);
       }
-      catch(error)
+      catch (error)
       {
          global.$$eventbus.trigger('log:error',
           `${packageName}Loading local configuration file for ${moduleName} failed...\n${error.message}`);
@@ -317,13 +323,13 @@ export default class FileUtil
          filename: path.basename(result.filepath),
          extension: path.extname(result.filepath).toLowerCase(),
          relativePath: FileUtil.getRelativePath(global.$$cli_baseCWD, result.filepath)
-      }
+      };
    }
 
    /**
     * Opens a local configuration file with additional sanity checking and handling of a provided default config.
     *
-    * @param {object}   options
+    * @param {object}   options - Options object
     *
     * @param {string}   options.moduleName - The module name to load a config file.
     *
@@ -338,7 +344,7 @@ export default class FileUtil
     *
     * @param {string[]} [options.searchPlaces] - Explicit list of search places.
     *
-    * @returns {Promise<void>}
+    * @returns {Promise<object|null>}
     */
    static async safeOpenConfig(options)
    {
@@ -347,8 +353,8 @@ export default class FileUtil
 
       const moduleName = options.moduleName;
       const defaultConfig = typeof options.defaultConfig === 'object' ? options.defaultConfig : null;
-      const packageName = typeof options.packageName === 'string' ? `${options.packageName}: `: '';
-      const cliFlags = typeof options.cliFlags === 'object' ? `${options.cliFlags}: `: {};
+      const packageName = typeof options.packageName === 'string' ? `${options.packageName}: ` : '';
+      const cliFlags = typeof options.cliFlags === 'object' ? `${options.cliFlags}: ` : {};
 
       // Handle ignoring loading local config files if the CLI flag `--ignore-local-config` is true.
       if (typeof cliFlags['ignore-local-config'] === 'boolean' && cliFlags['ignore-local-config'])
@@ -364,8 +370,8 @@ export default class FileUtil
          {
             if (Object.keys(result.config).length === 0)
             {
-               global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file `
-              + `empty using default config:\n${result.relativePath}`);
+               global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
+                `empty using default config:\n${result.relativePath}`);
 
                return defaultConfig;
             }
@@ -377,8 +383,8 @@ export default class FileUtil
          }
          else
          {
-            global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file `
-           + `malformed using default config; expected an 'object':\n${result.relativePath}`);
+            global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
+             `malformed using default config; expected an 'object':\n${result.relativePath}`);
 
             return defaultConfig;
          }
@@ -391,11 +397,12 @@ export default class FileUtil
     * A generator function that walks the local file tree.
     *
     * @param {string}   dir - The directory to start walking.
+    *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
     *
     * @returns {any}
     */
-   static async * walkDir(dir, skipDir = [])
+   static async *walkDir(dir, skipDir = [])
    {
       const skipDirMap = new Map(skipDir.map((entry) => { return [entry, 1]; }));
 
@@ -421,11 +428,12 @@ export default class FileUtil
     * A generator function that walks the local file tree.
     *
     * @param {string}   dir - The directory to start walking.
+    *
     * @param {Array}    skipDir - An array of directory names to skip walking.
     *
     * @returns {any}
     */
-   static async * walkFiles(dir, skipDir = [])
+   static async *walkFiles(dir, skipDir = [])
    {
       const skipDirMap = new Map(skipDir.map((entry) => { return [entry, 1]; }));
 

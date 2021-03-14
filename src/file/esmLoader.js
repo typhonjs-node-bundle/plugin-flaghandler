@@ -12,10 +12,12 @@ import getPackageType from 'get-package-type';
  *
  * @returns {Promise<*>}
  */
-export default async (filePath) => {
+export default async (filePath) =>
+{
    const extension = path.extname(filePath).toLowerCase();
 
-   switch (extension) {
+   switch (extension)
+   {
       case '.js':
          // Attempt to load `.js` file as ESM if 'package.type' is 'module'.
          if (await getPackageType(filePath) === 'module')
@@ -32,19 +34,19 @@ export default async (filePath) => {
 };
 
 /**
- * Uses dynamic import to load an ESM file.
+ * Uses dynamic import to load an ES Module. The module must have a default export.
  *
- * @param {string}   filePath
+ * @param {string}   modulePath - The module path.
  *
  * @returns {Promise<*>}
  */
-async function esmLoader(filePath)
+async function esmLoader(modulePath)
 {
-   const module = await import(filePath);
+   const module = await import(modulePath);
 
    if (!('default' in module))
    {
-      throw new Error(`${filePath} has no default export`);
+      throw new Error(`${modulePath} has no default export.`);
    }
 
    return module.default;
