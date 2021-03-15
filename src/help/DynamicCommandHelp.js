@@ -1,4 +1,7 @@
-import { Help } from './Help2.js';
+// eslint-disable-next-line
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+
+import { Help }         from './Help.js';
 
 /**
  * Provides functionality to load flags from DynamicCommand asynchronously so that they appear in help.
@@ -6,7 +9,7 @@ import { Help } from './Help2.js';
 export default class DynamicCommandHelp extends Help
 {
    /**
-    * @param {Config.Command} commandConfig - The command config to be loaded.
+    * @param {Interfaces.Command} commandConfig - The command config to be loaded.
     */
    async showCommandHelp(commandConfig)
    {

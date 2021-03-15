@@ -1,52 +1,61 @@
-import { error }        from '@oclif/errors';
 import * as chalk       from 'chalk';
 import indent           from 'indent-string';
 import stripAnsi        from 'strip-ansi';
 import wrap             from 'wrap-ansi';
 
+// eslint-disable-next-line
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+
+import { error }        from '@oclif/core/lib/errors/index.js';
 import CommandHelp      from '@oclif/core/lib/help/command.js';
 import { renderList }   from '@oclif/core/lib/help/list.js';
 import RootHelp         from '@oclif/core/lib/help/root.js';
 import { stdtermwidth } from '@oclif/core/lib/help/screen.js';
-import { template }     from '@oclif/core/lib/help/util.js';
-import { compact, sortBy, uniqBy } from '@oclif/core/lib/util.js';
 
-const {
-   bold,
-} = chalk
+import { compact, sortBy, uniqBy }              from '@oclif/core/lib/util.js';
+import { standarizeIDFromArgv, template }       from '@oclif/core/lib/help/util.js';
 
-const ROOT_INDEX_CMD_ID = '';
+export { standarizeIDFromArgv, getHelpClass }   from '@oclif/core/lib/help/util.js';
+
+const { bold } = chalk;
 
 /**
+ * @param {string[]} args -
  *
- *
- * @param {string[]} args
- *
- * @returns {string, *}
+ * @returns {*}
  */
 function getHelpSubject(args)
 {
    for (const arg of args)
    {
       if (arg === '--') { return; }
-      if (arg === 'help' || arg === '--help' || arg === '-h') { continue; }
+      if (arg === 'help' || arg === '--help') { continue; }
       if (arg.startsWith('-')) { return; }
 
       return arg;
    }
 }
 
-export default class Help
+/**
+ */
+export class Help
 {
+   /**
+    * @param {Interfaces.Config} config -
+    *
+    * @param {Partial<Interfaces.HelpOptions>}  opts -
+    */
    constructor(config, opts = {})
    {
+      if (!config.topicSeparator) { config.topicSeparator = ':'; } // back-support @oclif/config
+
       /**
-       * {Config.IConfig}
+       * @type {Interfaces.Config}
        */
       this.config = config;
 
       /**
-       * {HelpOptions}
+       * @type {Partial<Interfaces.HelpOptions>}
        */
       this.opts = { maxWidth: stdtermwidth, ...opts };
 
@@ -54,63 +63,74 @@ export default class Help
    }
 
    /**
-    * _topics is to work around Config.topics mistakenly including commands that do
+    * _topics is to work around Interfaces.topics mistakenly including commands that do
     * not have children, as well as topics. A topic has children, either commands or other topics. When
     * this is fixed upstream config.topics should return *only* topics with children,
     * and this can be removed.
     *
-    * @returns {Config.Topic[]}
+    * @returns {Interfaces.Topic[]}
     * @private
     */
    get _topics()
    {
-      // since this.config.topics is a getter that does non-trivial work, cache it outside the filter loop for
-      // performance benefits in the presence of large numbers of topics
-      const topics = this.config.topics;
-
-      return topics.filter((topic) =>
+      return this.config.topics.filter((topic) =>
       {
          // it is assumed a topic has a child if it has children
-         return topics.some(subTopic => subTopic.name.includes(`${topic.name}:`));
+         return this.config.topics.some((subTopic) => subTopic.name.includes(`${topic.name}:`));
       });
    }
 
+   /**
+    * @returns {Command.Plugin[]}
+    * @protected
+    */
    get sortedCommands()
    {
       let commands = this.config.commands;
 
-      commands = commands.filter(c => this.opts.all || !c.hidden);
-      commands = sortBy(commands, c => c.id);
-      commands = uniqBy(commands, c => c.id);
+      commands = commands.filter((c) => this.opts.all || !c.hidden);
+      commands = sortBy(commands, (c) => c.id);
+      commands = uniqBy(commands, (c) => c.id);
 
-      return commands
+      return commands;
    }
 
+   /**
+    * @returns {Interfaces.Topic[]}
+    * @protected
+    */
    get sortedTopics()
    {
       let topics = this._topics;
 
-      topics = topics.filter(t => this.opts.all || !t.hidden);
-      topics = sortBy(topics, t => t.name);
-      topics = uniqBy(topics, t => t.name);
+      topics = topics.filter((t) => this.opts.all || !t.hidden);
+      topics = sortBy(topics, (t) => t.name);
+      topics = uniqBy(topics, (t) => t.name);
 
       return topics;
    }
 
    /**
     * Show help, used in multi-command CLIs
-    * @param {string[]} argv passed into your command, useful for determining which type of help to display
+    *
+    * @param {string[]} argv - args passed into your command, useful for determining which type of help to display
     */
    async showHelp(argv)
    {
+      if (this.config.topicSeparator !== ':') { argv = standarizeIDFromArgv(argv, this.config); }
+
       const subject = getHelpSubject(argv);
+
       if (!subject)
       {
-         const rootCmd = this.config.findCommand(ROOT_INDEX_CMD_ID);
-
-         if (rootCmd)
+         if (this.config.pjson.oclif.default)
          {
-            await this.showCommandHelp(rootCmd);
+            const rootCmd = this.config.findCommand(this.config.pjson.oclif.default);
+
+            if (rootCmd)
+            {
+               await this.showCommandHelp(rootCmd);
+            }
          }
 
          await this.showRootHelp();
@@ -131,36 +151,31 @@ export default class Help
       if (topic)
       {
          await this.showTopicHelp(topic);
-         return
+         return;
       }
 
       error(`command ${subject} not found`);
    }
 
    /**
-    * Show help for an individual command.
+    * Show help for an individual command
     *
-    * @param {Config.Command}  command
-    *
-    * @returns {Promise<void>}
+    * @param {Interfaces.Command}  command -
     */
    async showCommandHelp(command)
    {
       const name = command.id;
       const depth = name.split(':').length;
 
-      const subTopics = this.sortedTopics.filter(t => t.name.startsWith(name + ':') &&
+      const subTopics = this.sortedTopics.filter((t) => t.name.startsWith(`${name}:`) &&
        t.name.split(':').length === depth + 1);
 
-      const subCommands = this.sortedCommands.filter(c => c.id.startsWith(name + ':') &&
+      const subCommands = this.sortedCommands.filter((c) => c.id.startsWith(`${name}:`) &&
        c.id.split(':').length === depth + 1);
 
       const title = command.description && this.render(command.description).split('\n')[0];
 
-      if (title)
-      {
-         console.log(title + '\n');
-      }
+      if (title) { console.log(`${title}\n`); }
 
       console.log(this.formatCommand(command));
       console.log('');
@@ -178,6 +193,10 @@ export default class Help
       }
    }
 
+   /**
+    * @returns {Promise<void>}
+    * @protected
+    */
    async showRootHelp()
    {
       let rootTopics = this.sortedTopics;
@@ -188,8 +207,8 @@ export default class Help
 
       if (!this.opts.all)
       {
-         rootTopics = rootTopics.filter(t => !t.name.includes(':'));
-         rootCommands = rootCommands.filter(c => !c.id.includes(':'));
+         rootTopics = rootTopics.filter((t) => !t.name.includes(':'));
+         rootCommands = rootCommands.filter((c) => !c.id.includes(':'));
       }
 
       if (rootTopics.length > 0)
@@ -200,25 +219,27 @@ export default class Help
 
       if (rootCommands.length > 0)
       {
-         rootCommands = rootCommands.filter(c => c.id);
+         rootCommands = rootCommands.filter((c) => c.id);
          console.log(this.formatCommands(rootCommands));
          console.log('');
       }
    }
 
    /**
-    * @param {Config.Topic} topic
+    * @param {Interfaces.Topic} topic -
+    *
     * @returns {Promise<void>}
+    * @protected
     */
    async showTopicHelp(topic)
    {
       const name = topic.name;
       const depth = name.split(':').length;
 
-      const subTopics = this.sortedTopics.filter(t => t.name.startsWith(name + ':') &&
+      const subTopics = this.sortedTopics.filter((t) => t.name.startsWith(`${name}:`) &&
        t.name.split(':').length === depth + 1);
 
-      const commands = this.sortedCommands.filter(c => c.id.startsWith(name + ':') &&
+      const commands = this.sortedCommands.filter((c) => c.id.startsWith(`${name}:`) &&
        c.id.split(':').length === depth + 1);
 
       console.log(this.formatTopic(topic));
@@ -238,36 +259,52 @@ export default class Help
 
    /**
     * @returns {string}
+    * @protected
     */
    formatRoot()
    {
-      const help = new RootHelp(this.config, this.opts);
+      const help = new RootHelp.default(this.config, this.opts);
       return help.root();
    }
 
    /**
+    * @param {Interfaces.Command} command -
     *
-    * @param {Config.Command} command
     * @returns {string}
+    * @protected
     */
    formatCommand(command)
    {
+      if (this.config.topicSeparator !== ':')
+      {
+         command.id = command.id.replace(/:/g, this.config.topicSeparator);
+         command.aliases = command.aliases && command.aliases.map((a) => a.replace(/:/g, this.config.topicSeparator));
+      }
+
       const help = new CommandHelp.default(command, this.config, this.opts);
+
       return help.generate();
    }
 
    /**
-    * @param {Config.Command[]}  commands
+    * @param {Interfaces.Command[]} commands -
+    *
     * @returns {string}
+    * @protected
     */
    formatCommands(commands)
    {
-      if (commands.length === 0) return '';
+      if (commands.length === 0) { return ''; }
 
-      const body = renderList(commands.map(c => [
-         c.id,
-         c.description && this.render(c.description.split('\n')[0]),
-      ]), {
+      const body = renderList(commands.map((c) =>
+      {
+         if (this.config.topicSeparator !== ':') { c.id = c.id.replace(/:/g, this.config.topicSeparator); }
+
+         return [
+            c.id,
+            c.description && this.render(c.description.split('\n')[0]),
+         ];
+      }), {
          spacer: '\n',
          stripAnsi: this.opts.stripAnsi,
          maxWidth: this.opts.maxWidth - 2,
@@ -280,8 +317,10 @@ export default class Help
    }
 
    /**
-    * @param {Config.Topic} topic
+    * @param {Interfaces.Topic} topic -
+    *
     * @returns {string}
+    * @protected
     */
    formatTopic(topic)
    {
@@ -289,39 +328,46 @@ export default class Help
       const title = description.split('\n')[0];
 
       description = description.split('\n').slice(1).join('\n');
+      let topicID = `${topic.name}:COMMAND`;
+
+      if (this.config.topicSeparator !== ':') { topicID = topicID.replace(/:/g, this.config.topicSeparator); }
 
       let output = compact([
          title,
          [
             bold('USAGE'),
-            indent(wrap(`$ ${this.config.bin} ${topic.name}:COMMAND`, this.opts.maxWidth - 2, {
-               trim: false,
-               hard: true
-            }), 2),
+            indent(wrap(`$ ${this.config.bin} ${topicID}`, this.opts.maxWidth - 2, { trim: false, hard: true }), 2),
          ].join('\n'),
          description && ([
             bold('DESCRIPTION'),
-            indent(wrap(description, this.opts.maxWidth - 2, {trim: false, hard: true}), 2),
+            indent(wrap(description, this.opts.maxWidth - 2, { trim: false, hard: true }), 2),
          ].join('\n')),
       ]).join('\n\n');
 
       if (this.opts.stripAnsi) { output = stripAnsi(output); }
 
-      return output + '\n';
+      return `${output}\n`;
    }
 
    /**
-    * @param {Config.Topic[]} topics
+    * @param {Interfaces.Topic[]} topics -
+    *
     * @returns {string}
+    * @protected
     */
    formatTopics(topics)
    {
-      if (topics.length === 0) return '';
+      if (topics.length === 0) { return ''; }
 
-      const body = renderList(topics.map(c => [
-         c.name,
-         c.description && this.render(c.description.split('\n')[0]),
-      ]), {
+      const body = renderList(topics.map((c) =>
+      {
+         if (this.config.topicSeparator !== ':') { c.name = c.name.replace(/:/g, this.config.topicSeparator); }
+
+         return [
+            c.name,
+            c.description && this.render(c.description.split('\n')[0]),
+         ];
+      }), {
          spacer: '\n',
          stripAnsi: this.opts.stripAnsi,
          maxWidth: this.opts.maxWidth - 2,
@@ -335,11 +381,14 @@ export default class Help
 
    /**
     * @deprecated used for readme generation
-    * @param {Config.Command} command The command to generate readme help for
+    *
+    * @param {Interfaces.Command} command The command to generate readme help for
+    *
     * @return {string} the readme help string for the given command
+    * @protected
     */
    command(command)
    {
-      return this.formatCommand(command)
+      return this.formatCommand(command);
    }
 }
