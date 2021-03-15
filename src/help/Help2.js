@@ -281,7 +281,7 @@ export class Help
          command.aliases = command.aliases && command.aliases.map((a) => a.replace(/:/g, this.config.topicSeparator));
       }
 
-      const help = new CommandHelp(command, this.config, this.opts);
+      const help = new CommandHelp.default(command, this.config, this.opts);
 
       return help.generate();
    }
