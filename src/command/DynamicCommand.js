@@ -6,14 +6,15 @@ import dotenv              from 'dotenv';
 
 import { NonFatalError }   from '@typhonjs-oclif/errors';
 
-import FileUtilMod         from 'typhonjs-file-util';
-
-const FileUtil = FileUtilMod.default;
+// TODO REMOVE
+// import FileUtilMod         from 'typhonjs-file-util';
+//
+// const FileUtil = FileUtilMod.default;
 
 /**
  * Provides default handling for TyphonJS dynamic command initialization of flags from Oclif plugins.
  */
-export default class DynamicCommand extends Command
+class DynamicCommand extends Command
 {
    /**
     * Performs any final steps before the command execution completes. This is useful for logging any data
@@ -21,10 +22,10 @@ export default class DynamicCommand extends Command
     */
    async finalize()
    {
-      // Write any log metafiles before handling noop flag.
+      // Write any log metafiles on finalize.
       if (typeof this._cliFlags.metafile === 'boolean' && this._cliFlags.metafile)
       {
-         await this._writeMetafiles();
+         await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:log:util:metafiles:write', this);
       }
    }
 
@@ -184,7 +185,9 @@ export default class DynamicCommand extends Command
          // Write any log metafiles before handling noop flag.
          if (typeof this._cliFlags.metafile === 'boolean' && this._cliFlags.metafile)
          {
-            await this._writeMetafiles();
+            await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:log:util:metafiles:write', this);
+            // TODO REMOVE
+            // await this._writeMetafiles();
          }
 
          let results = `-----------------------------------\n`;
@@ -265,51 +268,59 @@ export default class DynamicCommand extends Command
       return '';
    }
 
-   /**
-    * Writes out a time stamped compressed file including the CLI config, CLI flags, CLI command data to users home
-    * directory.
-    *
-    * @private
-    */
-   async _writeMetafiles()
-   {
-      const archiveDir = globalThis.$$cli_log_dir;
-      const compressFormat = this.config.windows ? 'zip' : 'tar.gz';
-
-      const fileUtil = new FileUtil({ compressFormat, eventbus: globalThis.$$eventbus });
-
-      const date = new Date();
-      const currentTime = date.getTime() - (date.getTimezoneOffset() * 60000);
-
-      const archiveFilename =
-       `${archiveDir}${path.sep}logs_${(new Date(currentTime).toJSON().slice(0, 19))}`.replace(/:/g, '_');
-
-      globalThis.$$eventbus.trigger('log:info', `Writing metafile logs to: ${archiveFilename}.${compressFormat}`);
-
-      fileUtil.archiveCreate({ filePath: archiveFilename });
-
-      // Write out parsed package.json data.
-      fileUtil.writeFile({
-         fileData: JSON.stringify(this.config, null, 3),
-         filePath: 'oclif.config.json'
-      });
-
-      if (typeof this.cliFlags === 'object')
-      {
-         fileUtil.writeFile({
-            fileData: JSON.stringify(this.cliFlags, null, 3),
-            filePath: 'cli-flags.json'
-         });
-      }
-
-      if (typeof this.commandData === 'object')
-      {
-         fileUtil.writeFile({
-            fileData: JSON.stringify(this.commandData, null, 3),
-            filePath: `command-data.json`
-         });
-      }
-
-      return fileUtil.archiveFinalize();
-   }
+   // /**
+   //  * Writes out a time stamped compressed file including the CLI config, CLI flags, CLI command data to users home
+   //  * directory.
+   //  *
+   //  * @private
+   //  */
+   // async _writeMetafiles()
+   // {
+   //    const archiveDir = globalThis.$$cli_log_dir;
+   //    const compressFormat = this.config.windows ? 'zip' : 'tar.gz';
+   //
+   //    const fileUtil = new FileUtil({ compressFormat, eventbus: globalThis.$$eventbus });
+   //
+   //    const date = new Date();
+   //    const currentTime = date.getTime() - (date.getTimezoneOffset() * 60000);
+   //
+   //    const archiveFilename =
+   //     `${archiveDir}${path.sep}logs_${(new Date(currentTime).toJSON().slice(0, 19))}`.replace(/:/g, '_');
+   //
+   //    globalThis.$$eventbus.trigger('log:info', `Writing metafile logs to: ${archiveFilename}.${compressFormat}`);
+   //
+   //    fileUtil.archiveCreate({ filePath: archiveFilename });
+   //
+   //    // Write out parsed package.json data.
+   //    fileUtil.writeFile({
+   //       fileData: JSON.stringify(this.config, null, 3),
+   //       filePath: 'oclif.config.json'
+   //    });
+   //
+   //    if (typeof this.cliFlags === 'object')
+   //    {
+   //       fileUtil.writeFile({
+   //          fileData: JSON.stringify(this.cliFlags, null, 3),
+   //          filePath: 'cli-flags.json'
+   //       });
+   //    }
+   //
+   //    if (typeof this.commandData === 'object')
+   //    {
+   //       fileUtil.writeFile({
+   //          fileData: JSON.stringify(this.commandData, null, 3),
+   //          filePath: `command-data.json`
+   //       });
+   //    }
+   //
+   //    return fileUtil.archiveFinalize();
+   // }
 }
+
+DynamicCommand.metaFileData = [
+   { key: 'config', filename: 'oclif.config.json' },
+   { key: 'cliFlags', filename: 'cli-flags.json' },
+   { key: 'commandData', filename: 'command-data.json' }
+];
+
+export default DynamicCommand;

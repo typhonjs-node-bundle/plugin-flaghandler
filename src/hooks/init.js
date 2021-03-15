@@ -1,13 +1,14 @@
-import fs                from 'fs';
-import path              from 'path';
-import os                from 'os';
+import fs            from 'fs';
+import path          from 'path';
+import os            from 'os';
 
-import Events            from 'backbone-esnext-events';
-import PluginManager     from 'typhonjs-plugin-manager';
+import Events        from 'backbone-esnext-events';
+import PluginManager from 'typhonjs-plugin-manager';
 
-import FileUtil          from '../file/FileUtil.js';
+import FileUtil      from '../file/FileUtil.js';
+import LogUtil       from '../file/LogUtil.js';
 
-import FlagHandler       from '../flags/FlagHandler.js';
+import FlagHandler   from '../flags/FlagHandler.js';
 
 const s_DEFAULT_LOG_LEVEL = 'info';
 
@@ -60,6 +61,8 @@ export default async function(opts)
       s_SET_VERSION();
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
+
+      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/LogUtil', instance: LogUtil });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FlagHandler', instance: new FlagHandler() });
    }
