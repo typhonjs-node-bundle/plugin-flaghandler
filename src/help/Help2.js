@@ -263,7 +263,7 @@ export class Help
     */
    formatRoot()
    {
-      const help = new RootHelp(this.config, this.opts);
+      const help = new RootHelp.default(this.config, this.opts);
       return help.root();
    }
 
