@@ -17,7 +17,7 @@ export default class LogUtil
     */
    static async writeMetafiles(command)
    {
-console.log(`!!!!LogUtil - writeMetaFiles - command.constructor.metaFileData:\n${JSON.stringify(command.constructor.metaFileData, null, 3)}`);
+console.log(`!!!!LogUtil - writeMetaFiles - command.constructor.metaFileData:\n${JSON.stringify(command.constructor._metaFileData, null, 3)}`);
 
       const archiveDir = globalThis.$$cli_log_dir;
       const compressFormat = command.config.windows ? 'zip' : 'tar.gz';
