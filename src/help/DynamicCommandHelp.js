@@ -1,4 +1,4 @@
-import Help from './Help.js';
+import { Help } from './Help2.js';
 
 /**
  * Provides functionality to load flags from DynamicCommand asynchronously so that they appear in help.
