@@ -13,6 +13,7 @@
     "./FileUtil": "./src/file/FileUtil.js",
     "./FlagHandler": "./src/flags/FlagHandler.js",
     "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",
+    "./Help": "./src/help/Help.js",
     "./hooks/init": "./src/hooks/init.js"
   },
   "dependencies": {

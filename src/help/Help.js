@@ -38,7 +38,7 @@ function getHelpSubject(args)
 
 /**
  */
-export class Help
+export default class Help
 {
    /**
     * @param {Interfaces.Config} config -
