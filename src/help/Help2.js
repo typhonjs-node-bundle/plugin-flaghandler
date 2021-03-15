@@ -1,4 +1,4 @@
-import { bold }         from 'chalk';
+import * as chalk       from 'chalk';
 import indent           from 'indent-string';
 import stripAnsi        from 'strip-ansi';
 import wrap             from 'wrap-ansi';
@@ -17,8 +17,7 @@ import { standarizeIDFromArgv, template }       from '@oclif/core/lib/help/util.
 
 export { standarizeIDFromArgv, getHelpClass }   from '@oclif/core/lib/help/util.js';
 
-// TODO REMOVE
-// const { bold } = chalk;
+const { bold } = chalk;
 
 /**
  * @param {string[]} args -
