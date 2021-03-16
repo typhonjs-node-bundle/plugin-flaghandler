@@ -10,7 +10,7 @@ import getPackageType from 'get-package-type';
  *
  * @param {string}   filePath - File path to load.
  *
- * @returns {Promise<*>}
+ * @returns {Promise<*>} The imported default ESM export or CJS file by require.
  */
 export default async (filePath) =>
 {
@@ -38,7 +38,7 @@ export default async (filePath) =>
  *
  * @param {string}   modulePath - The module path.
  *
- * @returns {Promise<*>}
+ * @returns {Promise<*>} The imported default ESM export.
  */
 async function esmLoader(modulePath)
 {

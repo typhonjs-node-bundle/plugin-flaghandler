@@ -18,6 +18,7 @@ export default class LogUtil
     *
     * @param {Interfaces.Command} command - The Oclif command instance to log.
     *
+    * @returns {Promise<void>} Returns a promise which resolves when archive is finalized.
     * @private
     */
    static async writeMetafiles(command)

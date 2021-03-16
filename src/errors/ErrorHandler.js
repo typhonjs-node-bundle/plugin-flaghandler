@@ -10,16 +10,23 @@ const PackageUtil = PackageUtilMod.default;
 
 /**
  */
-export default class ErrorHandler
+export class ErrorHandler
 {
+   /**
+    */
+   constructor()
+   {
+      this._match = new Map();
+   }
+
    /**
     * @param {Error} error - Error to handle / log.
     *
     * @param {Errors} Errors - @oclif/core Errors instance.
     *
-    * @returns {*}
+    * @returns {void}
     */
-   static handle(error, Errors)
+   handle(error, Errors)
    {
       // Given a magic boolean variable assigned to an error skip printing out a fatal error.
       if (error instanceof NonFatalError || (typeof error.$$error_fatal === 'boolean' && !error.$$error_fatal))
@@ -57,6 +64,8 @@ export default class ErrorHandler
       return Errors.handle(error);
    }
 }
+
+export default new ErrorHandler();
 
 /**
  * Attempts to load the first package.json found in the stack trace as the source of the offending error and returns

@@ -3,7 +3,6 @@ import indent           from 'indent-string';
 import stripAnsi        from 'strip-ansi';
 import wrap             from 'wrap-ansi';
 
-// eslint-disable-next-line
 import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
 
 import { error }        from '@oclif/core/lib/errors/index.js';
@@ -22,7 +21,7 @@ const { bold } = chalk;
 /**
  * @param {string[]} args -
  *
- * @returns {*}
+ * @returns {*} -
  */
 function getHelpSubject(args)
 {
@@ -68,7 +67,7 @@ export default class Help
     * this is fixed upstream config.topics should return *only* topics with children,
     * and this can be removed.
     *
-    * @returns {Interfaces.Topic[]}
+    * @returns {Interfaces.Topic[]} -
     * @private
     */
    get _topics()
@@ -81,7 +80,7 @@ export default class Help
    }
 
    /**
-    * @returns {Command.Plugin[]}
+    * @returns {Interfaces.Command[]} -
     * @protected
     */
    get sortedCommands()
@@ -96,7 +95,7 @@ export default class Help
    }
 
    /**
-    * @returns {Interfaces.Topic[]}
+    * @returns {Interfaces.Topic[]} -
     * @protected
     */
    get sortedTopics()
@@ -258,7 +257,7 @@ export default class Help
    }
 
    /**
-    * @returns {string}
+    * @returns {string} -
     * @protected
     */
    formatRoot()
@@ -270,7 +269,7 @@ export default class Help
    /**
     * @param {Interfaces.Command} command -
     *
-    * @returns {string}
+    * @returns {string} -
     * @protected
     */
    formatCommand(command)
@@ -289,7 +288,7 @@ export default class Help
    /**
     * @param {Interfaces.Command[]} commands -
     *
-    * @returns {string}
+    * @returns {string} -
     * @protected
     */
    formatCommands(commands)
@@ -319,7 +318,7 @@ export default class Help
    /**
     * @param {Interfaces.Topic} topic -
     *
-    * @returns {string}
+    * @returns {string} -
     * @protected
     */
    formatTopic(topic)
@@ -352,7 +351,7 @@ export default class Help
    /**
     * @param {Interfaces.Topic[]} topics -
     *
-    * @returns {string}
+    * @returns {string} -
     * @protected
     */
    formatTopics(topics)
@@ -384,7 +383,7 @@ export default class Help
     *
     * @param {Interfaces.Command} command The command to generate readme help for
     *
-    * @return {string} the readme help string for the given command
+    * @returns {string} the readme help string for the given command
     * @protected
     */
    command(command)

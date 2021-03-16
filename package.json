@@ -29,7 +29,7 @@
     "typhonjs-plugin-manager": "^0.2.0"
   },
   "devDependencies": {
-    "@typhonjs-config/eslint-config": "^0.1.0",
+    "@typhonjs-config/eslint-config": "typhonjs-config/eslint-config#main",
     "eslint": "^7.0.0"
   },
   "engines": {

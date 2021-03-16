@@ -19,7 +19,7 @@ const s_TSC_CONFIG = new Set(['tsconfig.json', 'jsconfig.json']);
  *
  * @param {string}   moduleName - The module name to build the default locations.
  *
- * @returns {string[]}
+ * @returns {string[]} List of configuration file names based on `moduleName`.
  */
 const s_DEFAULT_COSMIC_SEARCHPLACES = (moduleName) => [
    'package.json',
@@ -55,7 +55,7 @@ export default class FileUtil
     *
     * @param {Array}    [results] - Output array.
     *
-    * @returns {Promise<Array>}
+    * @returns {Promise<Array>} An array of directories.
     */
    static async getDirList(dir = '.', skipDir = [], results = [])
    {
@@ -76,7 +76,7 @@ export default class FileUtil
     *
     * @param {Array}    [results] - Output array.
     *
-    * @returns {Promise<Array>}
+    * @returns {Promise<Array>} An array of file paths.
     */
    static async getFileList(dir = '.', skipDir = [], results = [])
    {
@@ -96,7 +96,7 @@ export default class FileUtil
     *
     * @param {string}   filePath - The relative path to adjust from `basePath`.
     *
-    * @returns {string}
+    * @returns {string} A relative path based on `basePath` and `filePath`.
     */
    static getRelativePath(basePath, filePath)
    {
@@ -119,7 +119,7 @@ export default class FileUtil
     *
     * @param {string} [resolvePaths] - An optional list of paths to resolve against the dir path.
     *
-    * @returns {string}
+    * @returns {string} A file path based on `url` and any `resolvePaths`.
     */
    static getURLDirpath(url, ...resolvePaths)
    {
@@ -131,7 +131,7 @@ export default class FileUtil
     *
     * @param {string} url - A file URL
     *
-    * @returns {string}
+    * @returns {string} A file path from `url`.
     */
    static getURLFilepath(url)
    {
@@ -244,7 +244,7 @@ export default class FileUtil
     *
     * @param {string[]} [options.searchPlaces] - Explicit list of search places.
     *
-    * @returns {Promise<*>}
+    * @returns {Promise<object|null>} An object with loaded configuration data or null.
     */
    static async openConfig(options)
    {
@@ -344,7 +344,7 @@ export default class FileUtil
     *
     * @param {string[]} [options.searchPlaces] - Explicit list of search places.
     *
-    * @returns {Promise<object|null>}
+    * @returns {Promise<object|null>} An object with loaded configuration data or null.
     */
    static async safeOpenConfig(options)
    {
@@ -400,7 +400,8 @@ export default class FileUtil
     *
     * @param {Array}    [skipDir] - An array of directory names to skip walking.
     *
-    * @returns {any}
+    * @returns {string} A directory path.
+    * @yields
     */
    static async *walkDir(dir, skipDir = [])
    {
@@ -431,7 +432,8 @@ export default class FileUtil
     *
     * @param {Array}    skipDir - An array of directory names to skip walking.
     *
-    * @returns {any}
+    * @returns {string} A file path.
+    * @yields
     */
    static async *walkFiles(dir, skipDir = [])
    {

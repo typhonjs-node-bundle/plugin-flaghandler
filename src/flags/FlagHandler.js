@@ -21,7 +21,7 @@ export default class FlagHandler
       /**
        * Stores flags and a potential verify function broken down by command name -> plugin name -> { flags, verify }
        *
-       * @type {{command_name: {plugin_name: {flags: {}, verify: function}}}}
+       * @type {{command_name: {plugin_name: {flags: {}, verify: Function}}}}
        * @private
        */
       this._database = {};
@@ -38,7 +38,7 @@ export default class FlagHandler
     *
     * @param {object}   newEntry.flags - new flags to add.
     *
-    * @param {function} [newEntry.verify] - An optional function invoked to verify flags set by the given plugin.
+    * @param {Function} [newEntry.verify] - An optional function invoked to verify flags set by the given plugin.
     */
    addFlags(newEntry = {})
    {
@@ -180,7 +180,7 @@ export default class FlagHandler
     *
     * @param {string[]} query.commands - Retrieve flags for this command name.
     *
-    * @returns {*|{}}
+    * @returns {*|{}} The flags available from `query`.
     */
    getFlags(query = {})
    {

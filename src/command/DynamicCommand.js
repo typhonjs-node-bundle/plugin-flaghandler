@@ -27,7 +27,7 @@ class DynamicCommand extends Command
    /**
     * Returns the parsed data.
     *
-    * @returns {{}}
+    * @returns {*} Any loaded command data.
     */
    get commandData()
    {
@@ -37,7 +37,7 @@ class DynamicCommand extends Command
    /**
     * Returns the parsed CLI flags.
     *
-    * @returns {{}}
+    * @returns {object} Parsed CLI flags.
     */
    get cliFlags()
    {
@@ -47,14 +47,14 @@ class DynamicCommand extends Command
    /**
     * Loads all dynamic flags for this command after running any init hook.
     *
-    * @param {Object}   CommandClass - The DynamicCommand subclass.
+    * @param {object}   CommandClass - The DynamicCommand subclass.
     *
-    * @param {Object}   config - An Oclif config.
+    * @param {object}   config - An Oclif config.
     *
     * @param {boolean}  [loadDefault=true] - A boolean indicating whether to load defaults or current environment
     *                                        variables.
     *
-    * @returns {Promise<{}>}
+    * @returns {Promise<{}>} - Parsed flags.
     */
    static async loadDynamicFlags(CommandClass, config, loadDefault = true)
    {
@@ -155,7 +155,7 @@ class DynamicCommand extends Command
     *
     * @param {string}   options.event - The event to fire with parsed flags to load command data.
     *
-    * @return {object} Parsed and verified flags.
+    * @returns {object} Parsed and verified flags.
     *
     * @protected
     */
@@ -205,7 +205,7 @@ class DynamicCommand extends Command
     *
     * @param {string[]} commands - The actual command names.
     *
-    * @return {object} Parsed and verified flags.
+    * @returns {object} Parsed and verified flags.
     *
     * @private
     */
@@ -254,7 +254,7 @@ class DynamicCommand extends Command
    /**
     * Provides the base method to be overridden to provide per command implementation details for noop flag.
     *
-    * @returns {string}
+    * @returns {string} - A string containing any noop description.
     */
    toStringNoop()
    {
