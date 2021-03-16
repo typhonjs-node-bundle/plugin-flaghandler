@@ -85,14 +85,14 @@ export class ErrorHandler
 
             for (const match of this._match)
             {
-               const matches = match.exec(entry);
+               const matches = match.regex.exec(entry);
                modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
                if (typeof modulePath === 'string') { foundMatch = match; break; }
             }
 
             for (const match of s_DEFAULT_MATCH)
             {
-               const matches = match.exec(entry);
+               const matches = match.regex.exec(entry);
                modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
                if (typeof modulePath === 'string') { foundMatch = match; break; }
             }
