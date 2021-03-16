@@ -405,12 +405,12 @@ export default class FileUtil
     */
    static async *walkDir(dir, skipDir = [])
    {
-      const skipDirMap = new Map(skipDir.map((entry) => { return [entry, 1]; }));
+      const skipDirSet = new Set(skipDir);
 
       for await (const d of await fs.promises.opendir(dir))
       {
          // Skip directories in `skipMap` or any hidden directories (starts w/ `.`).
-         if (d.isDirectory() && (skipDirMap.has(d.name) || d.name.startsWith('.')))
+         if (d.isDirectory() && (skipDirSet.has(d.name) || d.name.startsWith('.')))
          {
             continue;
          }
@@ -437,12 +437,12 @@ export default class FileUtil
     */
    static async *walkFiles(dir, skipDir = [])
    {
-      const skipDirMap = new Map(skipDir.map((entry) => { return [entry, 1]; }));
+      const skipDirSet = new Set(skipDir);
 
       for await (const d of await fs.promises.opendir(dir))
       {
          // Skip directories in `skipMap` or any hidden directories (starts w/ `.`).
-         if (d.isDirectory() && (skipDirMap.has(d.name) || d.name.startsWith('.')))
+         if (d.isDirectory() && (skipDirSet.has(d.name) || d.name.startsWith('.')))
          {
             continue;
          }
