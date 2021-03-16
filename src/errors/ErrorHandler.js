@@ -8,6 +8,23 @@ import PackageUtilMod      from 'typhonjs-package-util';
 const logger = LoggerMod.default;
 const PackageUtil = PackageUtilMod.default;
 
+const s_DEFAULT_MESSAGE = 'An uncaught fatal error has been detected with an external module.\n' +
+ 'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
+  'checking if a similar report already exists:';
+
+const s_DEFAULT_MATCH = [
+   {
+      name: 'org-npm-module',
+      regex: /^.*\((\/.*(\/node_modules\/(@.*?)\/(.*?)\/))/g,
+      message: s_DEFAULT_MESSAGE
+   },
+   {
+      name: 'npm-module',
+      regex: /^.*\((\/.*(\/node_modules\/(.*?)\/))/g,
+      message: s_DEFAULT_MESSAGE
+   }
+];
+
 /**
  */
 export class ErrorHandler
@@ -16,7 +33,31 @@ export class ErrorHandler
     */
    constructor()
    {
-      this._match = new Map();
+      this._match = [];
+   }
+
+   /**
+    * @param {object} match - A potential error match.
+    * @param {string} match.name - Name of match.
+    * @param {RegExp} match.regex - Regular expression to match.
+    * @param {string} match.message - A message to display for this match.
+    */
+   addMatch(match = {})
+   {
+      if (typeof match !== 'object') { throw new TypeError(`'match' is not an 'object'.`); }
+      if (typeof match.name !== 'string') { throw new TypeError(`'match.name' is not a 'string'.`); }
+      if (!(match.regex instanceof RegExp)) { throw new TypeError(`'match.regex' is not a 'RegExp'.`); }
+      if (typeof match.message !== 'string') { throw new TypeError(`'match.message' is not a 'string'.`); }
+
+      if (this._match.find((element) => element.name === match.name))
+      {
+         global.$$eventbus.trigger('log:debug',
+          `ErrorHandler.addMatch - already have a match entry with name: ${match.name}`);
+      }
+      else
+      {
+         this._match.push(match);
+      }
    }
 
    /**
@@ -43,25 +84,38 @@ export class ErrorHandler
       // Acquire trace info from 'typhonjs-color-logger'
       const traceInfo = logger.getTraceInfo(error);
 
-      let packageData = null;
+      let matchData = null;
 
       // Determine if error occurred in an NPM module. If so attempt to load to any associated
       // package.json for the detected NPM module and post a fatal log message noting as much.
       if (traceInfo)
       {
-         packageData = s_FORMAT_FROM_TRACE(traceInfo.trace);
+         matchData = s_FORMAT_FROM_TRACE(traceInfo.trace);
       }
 
       // Note: This will exclude any package that starts w/ @oclif from posting a detailed error message. Since this is
       // a catch all error handler for the whole CLI we'll only post detailed error messages for non Oclif packages
       // detected where a `package.json` file can be found.
-      if (packageData !== null && typeof packageData === 'object' && typeof packageData.name === 'string' &&
-       !packageData.name.startsWith('@oclif'))
+      if (matchData !== null)
       {
-         s_PRINT_ERR_MESSAGE(packageData, error);
+         s_PRINT_ERR_MESSAGE(matchData, error);
       }
 
       return Errors.handle(error);
+   }
+
+   /**
+    * Wires up ErrorHandler on the plugin eventbus.
+    *
+    * @param {PluginEvent} ev - The plugin event.
+    *
+    * @see https://www.npmjs.com/package/typhonjs-plugin-manager
+    *
+    * @ignore
+    */
+   onPluginLoad(ev)
+   {
+      ev.eventbus.on(`typhonjs:oclif:system:error:handler:match:add`, this.addMatch, this);
    }
 }
 
@@ -77,7 +131,8 @@ export default new ErrorHandler();
  */
 function s_FORMAT_FROM_TRACE(trace)
 {
-   let packageInfo;
+   let packageInfo = null;
+   let foundMatch = null;
 
    if (Array.isArray(trace))
    {
@@ -85,32 +140,23 @@ function s_FORMAT_FROM_TRACE(trace)
 
       // Walk through the stack trace array of strings until the first entry that matches the five regex tests below.
       // This defines the module path to attempt to load any associated `package.json` file.
-      for (let cntr = 0; cntr < trace.length; cntr++)
+      for (const entry of trace)
       {
-         // Matches full path to local fvttdev package (match is group 1)
-         let matches = (/^.*\((\/.*\/fvttdev\/)src/g).exec(`${trace[cntr]}`);
-         modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
-         if (typeof modulePath === 'string') { break; }
+         if (modulePath !== null) { break; }
 
-         // Matches full path to local linked typhonjs-oclif package (match is group 1)
-         matches = (/^.*\((\/.*(\/typhonjs-oclif\/.*\/))src/g).exec(`${trace[cntr]}`);
-         modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
-         if (typeof modulePath === 'string') { break; }
+         for (const match of this._match)
+         {
+            const matches = match.exec(entry);
+            modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
+            if (typeof modulePath === 'string') { foundMatch = match; break; }
+         }
 
-         // Matches full path to local linked typhonjs-node-rollup package (match is group 1)
-         matches = (/^.*\((\/.*(\/typhonjs-node-rollup\/.*\/))src/g).exec(`${trace[cntr]}`);
-         modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
-         if (typeof modulePath === 'string') { break; }
-
-         // Matches full path to organization node module (match is group 1)
-         matches = (/^.*\((\/.*(\/node_modules\/(@.*?)\/(.*?)\/))/g).exec(`${trace[cntr]}`);
-         modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
-         if (typeof modulePath === 'string') { break; }
-
-         // Matches full path to non-organization node module (match is group 1)
-         matches = (/^.*\((\/.*(\/node_modules\/(.*?)\/))/g).exec(`${trace[cntr]}`);
-         modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
-         if (typeof modulePath === 'string') { break; }
+         for (const match of s_DEFAULT_MATCH)
+         {
+            const matches = match.exec(entry);
+            modulePath = matches !== null && matches.length >= 1 ? matches[1] : void 0;
+            if (typeof modulePath === 'string') { foundMatch = match; break; }
+         }
       }
 
       if (typeof modulePath === 'string')
@@ -125,54 +171,37 @@ function s_FORMAT_FROM_TRACE(trace)
       }
    }
 
-   return packageInfo;
+   return {
+      packageInfo,
+      match: foundMatch
+   };
 }
 
 /**
  * Prints an error message with `typhonjs-color-logger` including the package data info and error.
  *
- * @param {object}   packageData - Formatted `package.json` data.
+ * @param {object}   matchData - Data object potentially containing packageInfo and match data.
+ * @param {object}   matchData.packageInfo - Formatted `package.json` data.
+ * @param {object}   matchData.match - The associated match
+ *
  * @param {Error}    error - An uncaught error.
  */
-function s_PRINT_ERR_MESSAGE(packageData, error)
+function s_PRINT_ERR_MESSAGE(matchData, error)
 {
-   let packageMessage = '';
+   let message = '';
 
-   if (typeof packageData === 'object')
+   // Create a specific message if the module matches.
+   if (matchData.packageInfo !== null)
    {
       const sep =
          '-----------------------------------------------------------------------------------------------\n';
 
-      // Create a specific message if the module is detected as a TJSDoc module.
+      message = matchData.match !== null ? `${matchData.match.message}\n${sep}` : `s_DEFAULT_MESSAGE\n${sep}`;
 
-      /* eslint-disable prefer-template */
-
-      if (packageData.bugs.url === 'https://github.com/typhonjs-fvtt/fvttdev/issues')
-      {
-         packageMessage = 'An uncaught fatal error has been detected with FVTTDev CLI.\n' +
-            'Please report this error to the issues forum after checking if a similar ' +
-            'report already exists:\n' + sep;
-      }
-      else if (packageData.bugs.url === 'https://github.com/typhonjs-oclif/issues/issues' ||
-         packageData.bugs.url === 'https://github.com/typhonjs-node-rollup/issues/issues')
-      {
-         packageMessage = 'An uncaught fatal error has been detected with a TyphonJS Oclif module.\n' +
-            'Please report this error to the issues forum after checking if a similar ' +
-            'report already exists:\n' + sep;
-      }
-      else
-      {
-         packageMessage = 'An uncaught fatal error has been detected with an external module.\n' +
-            'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
-            'checking if a similar report already exists:\n' + sep;
-      }
-
-      /* eslint-enable prefer-template */
-
-      packageMessage += `${packageData.formattedMessage}\n${global.$$cli_name_version}`;
+      message += `${matchData.packageInfo.formattedMessage}\n${global.$$cli_name_version}`;
 
       // Log any uncaught errors as fatal.
-      logger.fatal(packageMessage, sep, error, '\n');
+      logger.fatal(message, sep, error, '\n');
    }
    else
    {
