@@ -1,6 +1,9 @@
-import path          from 'path';
+import path             from 'path';
 
-import FileUtilMod   from 'typhonjs-file-util';
+// eslint-disable-next-line
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+
+import FileUtilMod      from 'typhonjs-file-util';
 
 const FileUtil = FileUtilMod.default;
 
@@ -13,11 +16,27 @@ export default class LogUtil
     * Writes out a time stamped compressed file including the CLI config, CLI flags, CLI command data to users home
     * directory.
     *
+    * @param {Interfaces.Command} command - The Oclif command instance to log.
+    *
     * @private
     */
    static async writeMetafiles(command)
    {
-console.log(`!!!!LogUtil - writeMetaFiles - command.constructor.metaFileData:\n${JSON.stringify(command.constructor._metaFileData, null, 3)}`);
+      // Validate _metaFileData
+      const metaFileData = command.constructor._metaFileData;
+
+      if (!Array.isArray(metaFileData))
+      {
+         globalThis.$$eventbus.trigger('log:warn',
+          'Could not write metafile logs as <CommandClass>._metaFileData is not defined / an array.');
+         return;
+      }
+
+      // No data to write.
+      if (metaFileData.length === 0)
+      {
+         return;
+      }
 
       const archiveDir = globalThis.$$cli_log_dir;
       const compressFormat = command.config.windows ? 'zip' : 'tar.gz';
@@ -34,25 +53,35 @@ console.log(`!!!!LogUtil - writeMetaFiles - command.constructor.metaFileData:\n$
 
       fileUtil.archiveCreate({ filePath: archiveFilename });
 
-      // Write out parsed package.json data.
-      fileUtil.writeFile({
-         fileData: JSON.stringify(command.config, null, 3),
-         filePath: 'oclif.config.json'
-      });
-
-      if (typeof command.cliFlags === 'object')
+      for (let cntr = 0; cntr < metaFileData.length; cntr++)
       {
-         fileUtil.writeFile({
-            fileData: JSON.stringify(command.cliFlags, null, 3),
-            filePath: 'cli-flags.json'
-         });
-      }
+         const data = metaFileData[cntr];
 
-      if (typeof command.commandData === 'object')
-      {
+         if (typeof data !== 'object')
+         {
+            globalThis.$$eventbus.trigger('log:warn',
+             `Skipping <CommandClass>._metaFileData index ${cntr} as it is not an object.`);
+            continue;
+         }
+
+         if (typeof data.key !== 'string' || typeof data.filename !== 'string')
+         {
+            globalThis.$$eventbus.trigger('log:warn',
+             `Skipping <CommandClass>._metaFileData index ${cntr} as it is missing 'key' or 'filename'.`);
+            continue;
+         }
+
+         if (typeof command[data.key] === 'undefined')
+         {
+            globalThis.$$eventbus.trigger('log:warn',
+             `Skipping <CommandClass>._metaFileData index ${cntr} as key '${data.key}' not found in command.`);
+            continue;
+         }
+
+         // Write out data for given key and filename.
          fileUtil.writeFile({
-            fileData: JSON.stringify(command.commandData, null, 3),
-            filePath: `command-data.json`
+            fileData: JSON.stringify(command[data.key], null, 3),
+            filePath: data.filename
          });
       }
 
