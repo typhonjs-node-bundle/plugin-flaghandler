@@ -9,7 +9,7 @@
   "module": "src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./errorHandler": "./src/errors/errorHandler.js",
+    "./ErrorHandler": "./src/errors/ErrorHandler.js",
     "./FileUtil": "./src/file/FileUtil.js",
     "./FlagHandler": "./src/flags/FlagHandler.js",
     "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",
@@ -49,6 +49,7 @@
   "license": "MPL-2.0",
   "repository": "typhonjs-oclif/core",
   "scripts": {
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "prepack": "npm run eslint"
   }
 }
