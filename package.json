@@ -56,7 +56,6 @@
   "license": "MPL-2.0",
   "repository": "typhonjs-oclif/core",
   "scripts": {
-    "eslint": "eslint .",
-    "prepack": "npm run eslint"
+    "eslint": "eslint ."
   }
 }
