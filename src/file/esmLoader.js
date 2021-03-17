@@ -1,6 +1,7 @@
-import path           from 'path';
+import path             from 'path';
+import url              from 'url';
 
-import getPackageType from 'get-package-type';
+import getPackageType   from 'get-package-type';
 
 /**
  * Uses `getPackageType` to determine if `type` is set to 'module. If so loads '.js' files as ESM otherwise uses
@@ -20,7 +21,7 @@ export default async (filePath) =>
    {
       case '.js':
          // Attempt to load `.js` file as ESM if 'package.type' is 'module'.
-         if (await getPackageType(filePath) === 'module')
+         if (getPackageType.sync(filePath) === 'module')
          {
             return esmLoader(filePath);
          }
@@ -42,7 +43,7 @@ export default async (filePath) =>
  */
 async function esmLoader(modulePath)
 {
-   const module = await import(modulePath);
+   const module = await import(url.pathToFileURL(modulePath));
 
    if (!('default' in module))
    {
