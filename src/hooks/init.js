@@ -83,7 +83,10 @@ function s_SET_VERSION()
    const homeDir = os.homedir();
 
    // Retrieve the local package path to pull the version number for CLI `package.json`.
-   const { packageObj, packagePath } = PackageUtil.getPackagePath(import.meta.url);
+   const { packageObj, packagePath } = PackageUtil.getPackagePath({
+      filepath: import.meta.url,
+      callback: (({ packageObj }) => typeof packageObj.oclif === 'object' && typeof packageObj.bin === 'object')
+   });
 
    if (typeof packageObj !== 'object')
    {

@@ -48,7 +48,7 @@ export class ErrorHandler
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
       const parsedError = errorParser.filter({ error });
 
-      const packageObj = PackageUtil.getPackageAndFormat(parsedError.firstFilePath);
+      const packageObj = PackageUtil.getPackageAndFormat({ filepath: parsedError.firstFilePath });
 
       // Note: This will exclude any package that starts w/ @oclif from posting a detailed error message. Since this is
       // a catch all error handler for the whole CLI we'll only post detailed error messages for non Oclif packages
