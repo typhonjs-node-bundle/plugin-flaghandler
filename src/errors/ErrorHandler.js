@@ -9,11 +9,11 @@ const logger = LoggerMod.default;
 
 const s_REGEX_TYPHONJS = /^@?typhonjs/;
 
-const s_MESSAGE_TYPHONJS = 'An uncaught fatal error has been detected with a TyphonJS module.\n' +
+const s_MESSAGE_TYPHONJS = 'An uncaught fatal error has been detected with a TyphonJS module.\n\n' +
  'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
   'checking if a similar report already exists:';
 
-const s_MESSAGE_EXTERNAL = 'An uncaught fatal error has been detected with an external module.\n' +
+const s_MESSAGE_EXTERNAL = 'An uncaught fatal error has been detected with an external module.\n\n' +
  'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
   'checking if a similar report already exists:';
 
@@ -77,7 +77,7 @@ export class ErrorHandler
       {
          message = s_REGEX_TYPHONJS.test(packageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
 
-         message += `${s_MESSAGE_SEPERATOR}\n${packageObj.formattedMessage}\n${global.$$cli_name_version}`;
+         message += `\n${s_MESSAGE_SEPERATOR}\n${packageObj.formattedMessage}\n${global.$$cli_name_version}`;
 
          // Log any uncaught errors as fatal.
          logger.fatal(message, s_MESSAGE_SEPERATOR, error, '\n');
