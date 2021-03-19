@@ -463,7 +463,7 @@ export default class FileUtil
    /**
     * Wires up FlagHandler on the plugin eventbus.
     *
-    * @param {PluginEvent} ev - The plugin event.
+    * @param {object} ev - PluginEvent - The plugin event.
     *
     * @see https://www.npmjs.com/package/typhonjs-plugin-manager
     *

@@ -1,9 +1,9 @@
-import fs            from 'fs';
 import path          from 'path';
 import os            from 'os';
 
 import Events        from 'backbone-esnext-events';
 import PluginManager from 'typhonjs-plugin-manager';
+import PackageUtil   from '@typhonjs-node-utils/package-util';
 
 import FileUtil      from '../file/FileUtil.js';
 import LogUtil       from '../file/LogUtil.js';
@@ -83,15 +83,9 @@ function s_SET_VERSION()
    const homeDir = os.homedir();
 
    // Retrieve the local package path to pull the version number for CLI `package.json`.
-   const packagePath = FileUtil.getURLDirpath(import.meta.url, '../../../../../package.json');
+   const { packageObj, packagePath } = PackageUtil.getPackagePath(import.meta.url);
 
-   let packageObj;
-
-   try
-   {
-      packageObj = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-   }
-   catch (err)
+   if (typeof packageObj !== 'object')
    {
       throw new Error(`Failed to load package.json for CLI from:\n${packagePath}`);
    }

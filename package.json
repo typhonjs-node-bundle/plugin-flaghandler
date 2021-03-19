@@ -25,14 +25,14 @@
   },
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
+    "@typhonjs-node-utils/error-parser": "^0.0.0",
+    "@typhonjs-node-utils/package-util": "^0.0.6",
     "@typhonjs-oclif/errors": "^0.0.0",
     "backbone-esnext-events": "^0.3.0",
     "cosmiconfig": "^7.0.0",
     "dotenv": "^8.0.0",
-    "get-package-type": "^0.1.0",
     "typhonjs-color-logger": "^0.0.13",
     "typhonjs-file-util": "^0.0.11",
-    "typhonjs-package-util": "^0.0.3",
     "typhonjs-plugin-manager": "^0.2.0"
   },
   "devDependencies": {
@@ -56,6 +56,7 @@
   "license": "MPL-2.0",
   "repository": "typhonjs-oclif/core",
   "scripts": {
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "prepublishOnly": "npm run eslint"
   }
 }

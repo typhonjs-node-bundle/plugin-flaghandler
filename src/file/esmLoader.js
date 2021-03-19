@@ -1,7 +1,7 @@
-import path             from 'path';
-import url              from 'url';
+import path                from 'path';
+import url                 from 'url';
 
-import getPackageType   from 'get-package-type';
+import { getPackageType }  from '@typhonjs-node-utils/package-util';
 
 /**
  * Uses `getPackageType` to determine if `type` is set to 'module. If so loads '.js' files as ESM otherwise uses
@@ -21,7 +21,7 @@ export default async (filePath) =>
    {
       case '.js':
          // Attempt to load `.js` file as ESM if 'package.type' is 'module'.
-         if (getPackageType.sync(filePath) === 'module')
+         if (getPackageType(filePath) === 'module')
          {
             return esmLoader(filePath);
          }
