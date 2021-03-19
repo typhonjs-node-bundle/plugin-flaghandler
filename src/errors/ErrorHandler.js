@@ -48,7 +48,7 @@ export class ErrorHandler
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
       const parsedError = errorParser.filter({ error });
 
-      const packageObj = PackageUtil.getPackageAndFormat({ filepath: parsedError.firstFilePath });
+      const packageObj = PackageUtil.getPackageAndFormat({ filepath: parsedError.firstFilepath });
 
       // Note: This will exclude any package that starts w/ @oclif from posting a detailed error message. Since this is
       // a catch all error handler for the whole CLI we'll only post detailed error messages for non Oclif packages
@@ -77,7 +77,7 @@ export class ErrorHandler
       {
          message = s_REGEX_TYPHONJS.test(packageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
 
-         message += `${packageObj.formattedMessage}\n${global.$$cli_name_version}`;
+         message += `${s_MESSAGE_SEPERATOR}\n${packageObj.formattedMessage}\n${global.$$cli_name_version}`;
 
          // Log any uncaught errors as fatal.
          logger.fatal(message, s_MESSAGE_SEPERATOR, error, '\n');

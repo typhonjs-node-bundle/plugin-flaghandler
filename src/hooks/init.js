@@ -60,6 +60,8 @@ export default async function(opts)
 
       s_SET_VERSION();
 
+      globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/package-util', instance: PackageUtil });
+
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/LogUtil', instance: LogUtil });
@@ -85,7 +87,7 @@ function s_SET_VERSION()
    // Retrieve the local package path to pull the version number for CLI `package.json`.
    const { packageObj, packagePath } = PackageUtil.getPackagePath({
       filepath: import.meta.url,
-      callback: (({ packageObj }) => typeof packageObj.oclif === 'object' && typeof packageObj.bin === 'object')
+      callback: (data) => typeof data.packageObj.oclif === 'object' && typeof data.packageObj.bin === 'object'
    });
 
    if (typeof packageObj !== 'object')
@@ -95,7 +97,7 @@ function s_SET_VERSION()
 
    if (typeof packageObj.oclif.bin !== 'string')
    {
-      throw new TypeError(`Failed to load 'oclif.bin' from package.json:\n${packagePath}`);
+      throw new Error(`Failed to load 'oclif.bin' from package.json:\n${packagePath}`);
    }
 
    globalThis.$$cli_name = packageObj.oclif.bin;
