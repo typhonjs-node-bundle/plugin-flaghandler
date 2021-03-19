@@ -18,7 +18,7 @@ const s_MESSAGE_EXTERNAL = 'An uncaught fatal error has been detected with an ex
   'checking if a similar report already exists:';
 
 const s_MESSAGE_SEPERATOR =
- '-----------------------------------------------------------------------------------------------\n';
+ '-----------------------------------------------------------------------------------------------';
 
 /**
  */
