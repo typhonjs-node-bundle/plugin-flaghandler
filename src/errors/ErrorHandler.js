@@ -49,7 +49,7 @@ export class ErrorHandler
       }
 
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
-      const normalizedError = errorParser.normalize(error);
+      const normalizedError = errorParser.normalize({ error });
       const filterError = errorParser.filter({ error });
 
       const normalizedPackageObj = PackageUtil.getPackageAndFormat({
