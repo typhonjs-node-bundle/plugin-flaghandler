@@ -45,17 +45,15 @@ export default async function(opts)
       globalThis.$$pluginManager.add({
          name: '@typhonjs-node-utils/error-parser',
          instance: errorParser,
-         // options: {
-         //    // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
-         //    filterConfigs: [
-         //       {
-         //          type: 'exclusive',
-         //          name: 'FlagHandler',
-         //          filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
-         //       }
-         //    ],
-         //    showInfo: false
-         // }
+         options: {
+            // Adds an exclusive filter which removes `@typhonjs-oclif/core` from being a source of an error.
+            filterConfigs: [{
+               type: 'exclusive',
+               name: '@typhonjs-oclif/core',
+               filterString: '@typhonjs-oclif/core'
+            }],
+            showInfo: false
+         }
       });
 
       // Set the initial starting log level.

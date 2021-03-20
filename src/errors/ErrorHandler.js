@@ -46,47 +46,38 @@ export class ErrorHandler
       }
 
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
-      const parsedError = errorParser.filter({ error });
+      const normalizedError = errorParser.normalize(error);
+      const filterError = errorParser.filter({ error });
 
-      const packageObj = PackageUtil.getPackageAndFormat({ filepath: parsedError.firstFilepath });
+      const normalizedPackageObj = PackageUtil.getPackageAndFormat({ filepath: normalizedError.firstFilepath });
+      const filterPackageObj = PackageUtil.getPackageAndFormat({ filepath: filterError.firstFilepath });
 
-      // Note: This will exclude any package that starts w/ @oclif from posting a detailed error message. Since this is
-      // a catch all error handler for the whole CLI we'll only post detailed error messages for non Oclif packages
-      // detected where a `package.json` file can be found.
-      if (typeof packageObj === 'object')
-      {
-         this._printErrMessage(packageObj, error);
-      }
-
-      return Errors.handle(error);
-   }
-
-   /**
-    * Prints an error message with `typhonjs-color-logger` including the package data info and error.
-    *
-    * @param {object}   packageObj - Data object potentially containing packageInfo and match data.
-    *
-    * @param {Error}    error - An uncaught error.
-    */
-   _printErrMessage(packageObj, error)
-   {
       let message = '';
 
       // Create a specific message if the module matches.
-      if (packageObj !== void 0)
+      if (filterPackageObj !== void 0)
       {
-         message = s_REGEX_TYPHONJS.test(packageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
-
-         message += `\n${s_MESSAGE_SEPERATOR}\n${packageObj.formattedMessage}\n${global.$$cli_name_version}`;
-
-         // Log any uncaught errors as fatal.
-         logger.fatal(message, s_MESSAGE_SEPERATOR, error, '\n');
+         message += s_REGEX_TYPHONJS.test(filterPackageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
+         message += `\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\n${global.$$cli_name_version}`;
+         message += `\n${filterError.toString()}\n${s_MESSAGE_SEPERATOR}`;
       }
-      else
+
+      if (normalizedPackageObj !== void 0)
       {
-         // Log any uncaught errors as fatal.
-         logger.fatal(`An unknown fatal error has occurred; ${global.$$cli_name_version}:`, error, '\n');
+         message += s_REGEX_TYPHONJS.test(normalizedPackageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
+         message += `\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\n${global.$$cli_name_version}`;
+         message += `\n${normalizedError.toString()}\n${s_MESSAGE_SEPERATOR}`;
       }
+
+      if (normalizedPackageObj === void 0 && filterPackageObj === void 0)
+      {
+         message += `An unknown fatal error has occurred; ${global.$$cli_name_version}:\n${normalizedError.toString()}`;
+      }
+
+      // Log any uncaught errors as fatal.
+      logger.fatal(message, '\n');
+
+      return Errors.handle(error);
    }
 }
 
