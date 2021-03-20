@@ -66,8 +66,8 @@ export class ErrorHandler
       bitfield |= normalizedPackageObj !== void 0 ? 1 : 0;
       bitfield |= filterPackageObj !== void 0 ? 2 : 0;
 
-      // Handle the case when both filtered and normalized error stacks are the same.
-      if (normalizedError.uuid === filterError.uuid)
+      // Handle the cases when both filtered and normalized error stacks are the same or the filtered stack is empty.
+      if (normalizedError.uuid === filterError.uuid || filterError.stack.length === 0)
       {
          bitfield = 1;
       }
