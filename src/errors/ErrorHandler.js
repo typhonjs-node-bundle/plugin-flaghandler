@@ -7,18 +7,21 @@ import errorParser         from '@typhonjs-node-utils/error-parser';
 
 const logger = LoggerMod.default;
 
-const s_REGEX_TYPHONJS = /^@?typhonjs/;
+const s_MESSAGE_ONE_MODULE = `\n
+The source of the error may be associated with the stack trace and module listed below. This may be
+a valid runtime error, but consider reporting this error to the issue forum after checking if a
+similar report already exists. In your report include all of the information below. To aid your 
+search on the issue forum you can make a search with the UUID associated with the error.`;
 
-const s_MESSAGE_TYPHONJS = 'An uncaught fatal error has been detected with a TyphonJS module.\n\n' +
- 'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
-  'checking if a similar report already exists:';
-
-const s_MESSAGE_EXTERNAL = 'An uncaught fatal error has been detected with an external module.\n\n' +
- 'This may be a valid runtime error, but consider reporting this error to any issues forum after ' +
-  'checking if a similar report already exists:';
+const s_MESSAGE_TWO_MODULE = `\n
+The source of the error is likely in the first stack trace and module followed by the full stack
+trace and module that generated the error. This may be a valid runtime error, but consider 
+reporting this error to the first issue forum listed below after checking if a similar report
+already exists. In your report include all of the information below. To aid your search on the
+issue forum you can make a search with the UUID associated with the error.`;
 
 const s_MESSAGE_SEPERATOR =
- '-----------------------------------------------------------------------------------------------';
+   '---------------------------------------------------------------------------------------------------';
 
 /**
  */
@@ -49,29 +52,50 @@ export class ErrorHandler
       const normalizedError = errorParser.normalize(error);
       const filterError = errorParser.filter({ error });
 
-      const normalizedPackageObj = PackageUtil.getPackageAndFormat({ filepath: normalizedError.firstFilepath });
-      const filterPackageObj = PackageUtil.getPackageAndFormat({ filepath: filterError.firstFilepath });
+      const normalizedPackageObj = PackageUtil.getPackageAndFormat({
+         filepath: normalizedError.firstFilepath,
+         callback: (data) => typeof data.packageObj.name === 'string'
+      });
 
-      let message = '';
+      const filterPackageObj = PackageUtil.getPackageAndFormat({
+         filepath: filterError.firstFilepath,
+         callback: (data) => typeof data.packageObj.name === 'string'
+      });
 
-      // Create a specific message if the module matches.
-      if (filterPackageObj !== void 0)
+      let bitfield = 0;
+      bitfield |= normalizedPackageObj !== void 0 ? 1 : 0;
+      bitfield |= filterPackageObj !== void 0 ? 2 : 0;
+
+      let message = `\nAn uncaught fatal error has occurred.`;
+
+      switch (bitfield)
       {
-         message += s_REGEX_TYPHONJS.test(filterPackageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
-         message += `\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\n${global.$$cli_name_version}`;
-         message += `\n${filterError.toString()}\n${s_MESSAGE_SEPERATOR}`;
-      }
+         case 0:
+            message += ` ${global.$$cli_name_version}:\n${normalizedError.toString()}`;
+            break;
+         case 1:
+            message += s_MESSAGE_ONE_MODULE;
 
-      if (normalizedPackageObj !== void 0)
-      {
-         message += s_REGEX_TYPHONJS.test(normalizedPackageObj.name) ? s_MESSAGE_TYPHONJS : s_MESSAGE_EXTERNAL;
-         message += `\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\n${global.$$cli_name_version}`;
-         message += `\n${normalizedError.toString()}\n${s_MESSAGE_SEPERATOR}`;
-      }
+            message += `\n\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
+            message += `UUID: ${normalizedError.uuid}\n\n${normalizedError.toString()}${s_MESSAGE_SEPERATOR}`;
+            break;
 
-      if (normalizedPackageObj === void 0 && filterPackageObj === void 0)
-      {
-         message += `An unknown fatal error has occurred; ${global.$$cli_name_version}:\n${normalizedError.toString()}`;
+         case 2:
+            message += s_MESSAGE_ONE_MODULE;
+
+            message += `\n\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
+            message += `UUID: ${filterError.uuid}\n\n${filterError.toString()}${s_MESSAGE_SEPERATOR}`;
+            break;
+
+         case 3:
+            message += s_MESSAGE_TWO_MODULE;
+
+            message += `\n\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
+            message += `UUID: ${filterError.uuid}\n\n${filterError.toString()}${s_MESSAGE_SEPERATOR}`;
+
+            message += `\n\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
+            message += `UUID: ${normalizedError.uuid}\n\n${normalizedError.toString()}${s_MESSAGE_SEPERATOR}`;
+            break;
       }
 
       // Log any uncaught errors as fatal.
