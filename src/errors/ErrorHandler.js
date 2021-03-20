@@ -20,8 +20,8 @@ reporting this error to the first issue forum listed below after checking if a s
 already exists. In your report include all of the information below. To aid your search on the
 issue forum you can make a search with the UUID associated with the error.`;
 
-const s_MESSAGE_SEPERATOR =
-   '---------------------------------------------------------------------------------------------------';
+const s_MESSAGE_SEPARATOR =
+ '---------------------------------------------------------------------------------------------------';
 
 /**
  */
@@ -82,25 +82,29 @@ export class ErrorHandler
          case 1:
             message += s_MESSAGE_ONE_MODULE;
 
-            message += `\n\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
-            message += `UUID: ${normalizedError.uuid}\n\n${normalizedError.toString()}${s_MESSAGE_SEPERATOR}`;
+            message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
+            message += `CLI: ${global.$$cli_name_version}\nUUID: ${normalizedError.uuid}\n\n`;
+            message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
 
          case 2:
             message += s_MESSAGE_ONE_MODULE;
 
-            message += `\n\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
-            message += `UUID: ${filterError.uuid}\n\n${filterError.toString()}${s_MESSAGE_SEPERATOR}`;
+            message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
+            message += `CLI: ${global.$$cli_name_version}\nUUID: ${filterError.uuid}\n\n`;
+            message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
 
          case 3:
             message += s_MESSAGE_TWO_MODULE;
 
-            message += `\n\n${s_MESSAGE_SEPERATOR}\n${filterPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
-            message += `UUID: ${filterError.uuid}\n\n${filterError.toString()}${s_MESSAGE_SEPERATOR}`;
+            message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
+            message += `CLI: ${global.$$cli_name_version}\nUUID: ${filterError.uuid}\n\n`;
+            message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
 
-            message += `\n\n${s_MESSAGE_SEPERATOR}\n${normalizedPackageObj.formattedMessage}\nCLI: ${global.$$cli_name_version}\n`;
-            message += `UUID: ${normalizedError.uuid}\n\n${normalizedError.toString()}${s_MESSAGE_SEPERATOR}`;
+            message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
+            message += `CLI: ${global.$$cli_name_version}\nUUID: ${normalizedError.uuid}\n\n`;
+            message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
       }
 
