@@ -8,17 +8,19 @@ import errorParser         from '@typhonjs-node-utils/error-parser';
 const logger = LoggerMod.default;
 
 const s_MESSAGE_ONE_MODULE = `\n
-The source of the error may be associated with the stack trace and module listed below. This may be
-a valid runtime error, but consider reporting this error to the issue forum after checking if a
-similar report already exists. In your report include all of the information below. To aid your 
-search on the issue forum you can make a search with the UUID associated with the error.`;
+The source of the error may be associated with the stack trace and module listed below. This may 
+also be a valid runtime error. If you can not resolve this error consider reporting it to the issue
+forum after checking if a similar report already exists. In your report include all of the 
+information below. To aid your search on the issue forum you can make a search with the UUID 
+associated with the error to find any duplicate report.`;
 
 const s_MESSAGE_TWO_MODULE = `\n
-The source of the error is likely in the first stack trace and module followed by the full stack
-trace and module that generated the error. This may be a valid runtime error, but consider 
-reporting this error to the first issue forum listed below after checking if a similar report
-already exists. In your report include all of the information below. To aid your search on the
-issue forum you can make a search with the UUID associated with the error.`;
+The source of the error is likely in the first filtered stack trace and module followed by the full
+stack trace and module at the top of the error stack. This may also be a valid runtime error. If 
+you can not resolve this error consider reporting it to the first issue forum listed below after
+checking if a similar report already exists. In your report include all of the information below.
+To aid your search on the issue forum you can make a search with the UUID associated with the error
+to find any duplicate report.`;
 
 const s_MESSAGE_SEPARATOR =
  '---------------------------------------------------------------------------------------------------';
@@ -72,7 +74,7 @@ export class ErrorHandler
          bitfield = 1;
       }
 
-      let message = `\nAn uncaught fatal error has occurred.`;
+      let message = `An uncaught fatal error has occurred.`;
 
       switch (bitfield)
       {

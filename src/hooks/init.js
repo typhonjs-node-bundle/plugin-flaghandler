@@ -43,19 +43,23 @@ export default async function(options)
       globalThis.$$pluginManager = new PluginManager({ eventbus: globalThis.$$eventbus });
 
       // Adds color logger plugin
-      globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger' });
+      globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
 
       globalThis.$$pluginManager.add({
          name: '@typhonjs-node-utils/error-parser',
          instance: errorParser,
          options: {
-            // Adds an exclusive filter which removes `@typhonjs-oclif/core` from being a source of an error.
+            // Adds an exclusive filters which remove `@typhonjs-oclif/core` & `@oclif/core` from being the source of
+            // a filtered error.
             filterConfigs: [{
                type: 'exclusive',
                name: '@typhonjs-oclif/core',
                filterString: '@typhonjs-oclif/core'
-            }],
-            showInfo: false
+            }, {
+               type: 'exclusive',
+               name: '@oclif/core',
+               filterString: '@oclif/core'
+            }]
          }
       });
 
@@ -64,7 +68,7 @@ export default async function(options)
 
       globalThis.$$eventbus.trigger('log:debug', `TyphonJS CLI init hook running '${options.id}'.`);
 
-      s_SET_VERSION(options.config);
+      s_SET_VERSION();
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/package-util', instance: PackageUtil });
 
