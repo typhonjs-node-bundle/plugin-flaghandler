@@ -83,7 +83,7 @@ export class ErrorHandler
             message += s_MESSAGE_ONE_MODULE;
 
             message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
-            message += `CLI: ${global.$$cli_name_version}\nUUID: ${normalizedError.uuid}\n\n`;
+            message += `CLI: ${global.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
             message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
 
@@ -91,7 +91,7 @@ export class ErrorHandler
             message += s_MESSAGE_ONE_MODULE;
 
             message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
-            message += `CLI: ${global.$$cli_name_version}\nUUID: ${filterError.uuid}\n\n`;
+            message += `CLI: ${global.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
             message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
 
@@ -99,11 +99,11 @@ export class ErrorHandler
             message += s_MESSAGE_TWO_MODULE;
 
             message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
-            message += `CLI: ${global.$$cli_name_version}\nUUID: ${filterError.uuid}\n\n`;
+            message += `CLI: ${global.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
             message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
 
             message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
-            message += `CLI: ${global.$$cli_name_version}\nUUID: ${normalizedError.uuid}\n\n`;
+            message += `CLI: ${global.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
             message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
             break;
       }
