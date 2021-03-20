@@ -24,6 +24,10 @@ export default async function(options)
 {
    try
    {
+      globalThis.$$cli_name = options.config.bin;
+      globalThis.$$cli_version = options.config.version;
+      globalThis.$$cli_name_version = `${globalThis.$$cli_name} (${globalThis.$$cli_version})`;
+
       const logLevel = options.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
 
       // Save base executing path immediately before anything else occurs w/ CLI / Oclif.
@@ -79,14 +83,9 @@ export default async function(options)
 /**
  * Sets the global name and version number for the CLI in `globalThis.$$cli_name` & `globalThis.$$cli_version`. Also
  * provides a convenience name + package version string in `globalThis.$$cli_name_version`.
- *
- * @param {object} config - Oclif CLI config
  */
-function s_SET_VERSION(config)
+function s_SET_VERSION()
 {
-   globalThis.$$cli_name = config.bin;
-   globalThis.$$cli_version = config.version;
-   globalThis.$$cli_name_version = `${globalThis.$$cli_name} (${globalThis.$$cli_version})`;
    globalThis.$$cli_env_prefix = globalThis.$$cli_name.toUpperCase();
 
    const homeDir = os.homedir();
