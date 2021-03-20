@@ -2,7 +2,6 @@ import path                from 'path';
 import os                  from 'os';
 
 import Events              from 'backbone-esnext-events';
-import { NonFatalError }   from '@typhonjs-oclif/errors';
 import errorParser         from '@typhonjs-node-utils/error-parser';
 import PackageUtil         from '@typhonjs-node-utils/package-util';
 import PluginManager       from 'typhonjs-plugin-manager';
@@ -17,15 +16,15 @@ const s_DEFAULT_LOG_LEVEL = 'info';
 /**
  * Initializes a TyphonJS CLI with a plugin manager and eventbus and several default plugins.
  *
- * @param {object} opts - options of the CLI action.
+ * @param {object} options - options of the CLI action.
  *
  * @returns {Promise<void>}
  */
-export default async function(opts)
+export default async function(options)
 {
    try
    {
-      const logLevel = opts.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
+      const logLevel = options.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
 
       // Save base executing path immediately before anything else occurs w/ CLI / Oclif.
       globalThis.$$cli_baseCWD = globalThis.$$cli_origCWD = process.cwd();
@@ -59,9 +58,9 @@ export default async function(opts)
       // Set the initial starting log level.
       globalThis.$$eventbus.trigger('log:level:set', logLevel);
 
-      globalThis.$$eventbus.trigger('log:debug', `TyphonJS CLI init hook running '${opts.id}'.`);
+      globalThis.$$eventbus.trigger('log:debug', `TyphonJS CLI init hook running '${options.id}'.`);
 
-      s_SET_VERSION();
+      s_SET_VERSION(options.config);
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/package-util', instance: PackageUtil });
 
@@ -80,32 +79,17 @@ export default async function(opts)
 /**
  * Sets the global name and version number for the CLI in `globalThis.$$cli_name` & `globalThis.$$cli_version`. Also
  * provides a convenience name + package version string in `globalThis.$$cli_name_version`.
+ *
+ * @param {object} config - Oclif CLI config
  */
-function s_SET_VERSION()
+function s_SET_VERSION(config)
 {
-   globalThis.$$cli_name = 'unknown';
+   globalThis.$$cli_name = config.bin;
+   globalThis.$$cli_version = config.version;
+   globalThis.$$cli_name_version = `${globalThis.$$cli_name} (${globalThis.$$cli_version})`;
+   globalThis.$$cli_env_prefix = globalThis.$$cli_name.toUpperCase();
 
    const homeDir = os.homedir();
-
-   // Retrieve the local package path to pull the version number for CLI `package.json`.
-   const { packageObj, packagePath } = PackageUtil.getPackagePath({
-      filepath: import.meta.url,
-      callback: (data) => typeof data.packageObj.oclif === 'object' && typeof data.packageObj.bin === 'object'
-   });
-
-   if (typeof packageObj !== 'object')
-   {
-      const message = typeof packagePath === 'string' ? `Failed to load package.json for CLI from:\n${packagePath}` :
-       `Failed to load package.json for CLI`;
-
-      throw new NonFatalError(message);
-   }
-
-   globalThis.$$cli_name = packageObj.oclif.bin;
-   globalThis.$$cli_version = packageObj.version;
-   globalThis.$$cli_name_version = `${packageObj.oclif.bin} (${packageObj.version})`;
-
-   globalThis.$$cli_env_prefix = packageObj.oclif.bin.toUpperCase();
 
    globalThis.$$eventbus.trigger('log:debug',
     `setting environment variable prefix to '${globalThis.$$cli_env_prefix}'.`);
