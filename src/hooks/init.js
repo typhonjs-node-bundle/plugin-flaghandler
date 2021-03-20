@@ -1,14 +1,16 @@
-import path          from 'path';
-import os            from 'os';
+import path                from 'path';
+import os                  from 'os';
 
-import Events        from 'backbone-esnext-events';
-import PluginManager from 'typhonjs-plugin-manager';
-import PackageUtil   from '@typhonjs-node-utils/package-util';
+import Events              from 'backbone-esnext-events';
+import { NonFatalError }   from '@typhonjs-oclif/errors';
+import errorParser         from '@typhonjs-node-utils/error-parser';
+import PackageUtil         from '@typhonjs-node-utils/package-util';
+import PluginManager       from 'typhonjs-plugin-manager';
 
-import FileUtil      from '../file/FileUtil.js';
-import LogUtil       from '../file/LogUtil.js';
+import FileUtil            from '../file/FileUtil.js';
+import LogUtil             from '../file/LogUtil.js';
 
-import FlagHandler   from '../flags/FlagHandler.js';
+import FlagHandler         from '../flags/FlagHandler.js';
 
 const s_DEFAULT_LOG_LEVEL = 'info';
 
@@ -38,19 +40,22 @@ export default async function(opts)
       globalThis.$$pluginManager = new PluginManager({ eventbus: globalThis.$$eventbus });
 
       // Adds color logger plugin
+      globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger' });
+
       globalThis.$$pluginManager.add({
-         name: 'typhonjs-color-logger',
-         options: {
-            // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
-            filterConfigs: [
-               {
-                  type: 'exclusive',
-                  name: 'FlagHandler',
-                  filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
-               }
-            ],
-            showInfo: false
-         }
+         name: '@typhonjs-node-utils/error-parser',
+         instance: errorParser,
+         // options: {
+         //    // Adds an exclusive filter which removes `FlagHandler` from stack trace / being a source of an error.
+         //    filterConfigs: [
+         //       {
+         //          type: 'exclusive',
+         //          name: 'FlagHandler',
+         //          filterString: '@typhonjs-oclif/core/src/flags/FlagHandler.js'
+         //       }
+         //    ],
+         //    showInfo: false
+         // }
       });
 
       // Set the initial starting log level.
@@ -92,12 +97,10 @@ function s_SET_VERSION()
 
    if (typeof packageObj !== 'object')
    {
-      throw new Error(`Failed to load package.json for CLI from:\n${packagePath}`);
-   }
+      const message = typeof packagePath === 'string' ? `Failed to load package.json for CLI from:\n${packagePath}` :
+       `Failed to load package.json for CLI`;
 
-   if (typeof packageObj.oclif.bin !== 'string')
-   {
-      throw new Error(`Failed to load 'oclif.bin' from package.json:\n${packagePath}`);
+      throw new NonFatalError(message);
    }
 
    globalThis.$$cli_name = packageObj.oclif.bin;
