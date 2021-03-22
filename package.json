@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "typhonrt",
   "bugs": "https://github.com/typhonjs-oclif/core/issues",
   "type": "module",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
-    "@typhonjs-node-utils/error-parser": "^0.0.2",
+    "@typhonjs-node-utils/error-parser": "^0.0.3",
     "@typhonjs-node-utils/package-util": "^0.0.9",
     "@typhonjs-oclif/errors": "^0.0.0",
     "backbone-esnext-events": "^0.3.0",
