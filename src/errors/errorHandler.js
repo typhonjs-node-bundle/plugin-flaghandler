@@ -5,6 +5,8 @@ import PackageUtil         from '@typhonjs-node-utils/package-util';
 
 import errorParser         from '@typhonjs-node-utils/error-parser';
 
+import { config, CLIError, ExitError } from '@oclif/core/lib/errors/index.js';
+
 const logger = LoggerMod.default;
 
 const s_MESSAGE_ONE_MODULE = `\n
@@ -26,44 +28,47 @@ const s_MESSAGE_SEPARATOR =
  '---------------------------------------------------------------------------------------------------';
 
 /**
+ * Adds the essential handling from the Oclif error handler with the addition of logging better errors based
+ * on stack trace normalization / filtering and lookup for any associated package.json / modules.
+ *
+ * @param {Error} error - Error to handle / log.
+ *
+ * @see @typhonjs-node-utils/error-parser - for filtering capabilities.
  */
-export class ErrorHandler
+export default function errorHandler(error)
 {
-   /**
-    * @param {Error} error - Error to handle / log.
-    *
-    * @param {Errors} Errors - @oclif/core Errors instance.
-    *
-    * @returns {void}
-    */
-   handle(error, Errors)
+   try
    {
-      try
+      if (!error) { error = new CLIError('no error?'); }
+      if (error.message === 'SIGINT') { process.exit(1); }
+
+      // Handle TyphonJS NonFatalError
+      if (error instanceof NonFatalError || (typeof error.$$error_fatal === 'boolean' && !error.$$error_fatal))
       {
-         if (!error) { error = new Error('no error?'); }
-         if (error.message === 'SIGINT') { process.exit(1); }
+         const logEvent = typeof error.$$logEvent === 'string' ? error.$$logEvent : 'log:error';
+         const errorCode = Number.isInteger(error.$$errorCode) ? error.$$errorCode : 1;
 
-         // Given a magic boolean variable assigned to an error skip printing out a fatal error.
-         if (error instanceof NonFatalError || (typeof error.$$error_fatal === 'boolean' && !error.$$error_fatal))
-         {
-            const logEvent = typeof error.$$logEvent === 'string' ? error.$$logEvent : 'log:error';
-            const errorCode = Number.isInteger(error.$$errorCode) ? error.$$errorCode : 1;
+         // log error message unless the log event is `log:trace`.
+         global.$$eventbus.trigger(logEvent, logEvent !== 'log:trace' ? error.message : error);
 
-            // log error message unless the log event is `log:trace`.
-            global.$$eventbus.trigger(logEvent, logEvent !== 'log:trace' ? error.message : error);
+         process.exit(errorCode);
+      }
 
-            return Errors.handle(new Errors.ExitError(errorCode));
-         }
+      // Acquire trace info from '@typhonjs-node-utils/error-parser'
+      const normalizedError = errorParser.normalize({ error });
+      const filterError = errorParser.filter({ error });
 
-         // Acquire trace info from '@typhonjs-node-utils/error-parser'
-         const normalizedError = errorParser.normalize({ error });
-         const filterError = errorParser.filter({ error });
+      const shouldPrint = !(error instanceof ExitError);
 
+      if (shouldPrint)
+      {
+         // Attempt to find the `package.json` from first file path in the normalized error.
          const normalizedPackageObj = PackageUtil.getPackageAndFormat({
             filepath: normalizedError.firstFilepath,
             callback: (data) => typeof data.packageObj.name === 'string'
          });
 
+         // Attempt to find the `package.json` from first file path in the filtered error (likely source of error).
          const filterPackageObj = PackageUtil.getPackageAndFormat({
             filepath: filterError.firstFilepath,
             callback: (data) => typeof data.packageObj.name === 'string'
@@ -73,8 +78,8 @@ export class ErrorHandler
          bitfield |= normalizedPackageObj !== void 0 ? 1 : 0;
          bitfield |= filterPackageObj !== void 0 ? 2 : 0;
 
-         // Handle the cases when both filtered and normalized error stacks point to same module or the filtered stack
-         // is empty.
+         // Handle the cases when both filtered and normalized error stacks point to same module or the filtered
+         // stack is empty.
          if (normalizedError.firstFilepath === filterError.firstFilepath || filterError.stack.length === 0)
          {
             bitfield = 1;
@@ -118,50 +123,31 @@ export class ErrorHandler
 
          // Log any uncaught errors as fatal.
          logger.fatal(message, '\n');
-
-         return Errors.handle(error);
       }
-      catch (err)
+
+      // Handling of Oclif errors and specific error logger installed.
+      const exitCode = error.oclif?.exit !== void 0 && error.oclif?.exit !== false ? error.oclif?.exit : 1;
+
+      if (config.errorLogger && error.code !== 'EEXIT')
       {
-         console.error(error.stack);
-         console.error(err.stack);
-         process.exit(1);
+         if (normalizedError)
+         {
+            config.errorLogger.log(normalizedError.toString());
+         }
+
+         config.errorLogger.flush()
+            .then(() => process.exit(exitCode))
+            .catch(console.error);
+      }
+      else
+      {
+         process.exit(exitCode);
       }
    }
+   catch (err)
+   {
+      console.error(error.stack);
+      console.error(err.stack);
+      process.exit(1);
+   }
 }
-
-// TODO evaluate removing the use of Errors.handle and incorporate the key aspects of the Oclif error handler directly.
-// TODO Reason: Errors print twice when using Error.handle. Below is the Oclif error handler.
-/*
-  try {
-    if (!err) err = new CLIError('no error?')
-    if (err.message === 'SIGINT') process.exit(1)
-
-    const shouldPrint = !(err instanceof ExitError)
-    const pretty = prettyPrint(err)
-    const stack = clean(err.stack || '', {pretty: true})
-
-    if (shouldPrint) {
-      console.error(pretty ? pretty : stack)
-    }
-
-    const exitCode = err.oclif?.exit !== undefined && err.oclif?.exit !== false ? err.oclif?.exit : 1
-
-    if (config.errorLogger && err.code !== 'EEXIT') {
-      if (stack) {
-        config.errorLogger.log(stack)
-      }
-
-      config.errorLogger.flush()
-      .then(() => process.exit(exitCode))
-      .catch(console.error)
-    } else process.exit(exitCode)
-  } catch (error) {
-    console.error(err.stack)
-    console.error(error.stack)
-    process.exit(1)
-  }
-
- */
-
-export default new ErrorHandler();
