@@ -49,20 +49,26 @@ export default class FileUtil
    /**
     * Returns an array of all directories found from walking the directory tree provided.
     *
-    * @param {string}   dir - Directory to walk.
+    * @param {object}      options - An options object.
     *
-    * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    * @param {string}      options.dir - Directory to walk.
     *
-    * @param {Array}    [results] - Output array.
+    * @param {Array|Set}   [options.skipDir] - An array or Set of directory names to skip walking.
+    *
+    * @param {Array}       [options.results=[]] - Output array.
+    *
+    * @param {boolean}     [options.sort=true] - Sort output array.
     *
     * @returns {Promise<Array>} An array of directories.
     */
-   static async getDirList(dir = '.', skipDir = [], results = [])
+   static async getDirList({ dir = '.', skipDir, results = [], sort = true } = {})
    {
       for await (const p of FileUtil.walkDir(dir, skipDir))
       {
          results.push(path.resolve(p));
       }
+
+      if (sort) { results.sort(); }
 
       return results;
    }
@@ -70,20 +76,26 @@ export default class FileUtil
    /**
     * Returns an array of all files found from walking the directory tree provided.
     *
-    * @param {string}   dir - Directory to walk.
+    * @param {object}      options - An options object.
     *
-    * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    * @param {string}      options.dir - Directory to walk.
     *
-    * @param {Array}    [results] - Output array.
+    * @param {Array|Set}   [options.skipDir] - An array or Set of directory names to skip walking.
+    *
+    * @param {Array}       [options.results=[]] - Output array.
+    *
+    * @param {boolean}     [options.sort=true] - Sort output array.
     *
     * @returns {Promise<Array>} An array of file paths.
     */
-   static async getFileList(dir = '.', skipDir = [], results = [])
+   static async getFileList({ dir = '.', skipDir, results = [], sort = true } = {})
    {
       for await (const p of FileUtil.walkFiles(dir, skipDir))
       {
          results.push(path.resolve(p));
       }
+
+      if (sort) { results.sort(); }
 
       return results;
    }
@@ -143,13 +155,13 @@ export default class FileUtil
     * in an attempt to locate a Babel configuration file. If a Babel configuration file is found `true` is
     * immediately returned.
     *
-    * @param {string}   dir - Directory to walk.
+    * @param {string}      dir - Directory to walk.
     *
-    * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
     *
     * @returns {Promise<boolean>} Whether a Babel configuration file was found.
     */
-   static async hasBabelConfig(dir = '.', skipDir = [])
+   static async hasBabelConfig(dir = '.', skipDir)
    {
       for await (const p of FileUtil.walkFiles(dir, skipDir))
       {
@@ -166,13 +178,13 @@ export default class FileUtil
     * in an attempt to locate a Typescript configuration file. If a configuration file is found `true` is
     * immediately returned.
     *
-    * @param {string}   dir - Directory to walk.
+    * @param {string}      dir - Directory to walk.
     *
-    * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
     *
     * @returns {Promise<boolean>} Whether a Typescript configuration file was found.
     */
-   static async hasTscConfig(dir = '.', skipDir = [])
+   static async hasTscConfig(dir = '.', skipDir)
    {
       for await (const p of FileUtil.walkFiles(dir, skipDir))
       {
@@ -396,16 +408,29 @@ export default class FileUtil
    /**
     * A generator function that walks the local file tree.
     *
-    * @param {string}   dir - The directory to start walking.
+    * @param {string}      dir - The directory to start walking.
     *
-    * @param {Array}    [skipDir] - An array of directory names to skip walking.
+    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
     *
     * @returns {string} A directory path.
     * @yields
     */
-   static async *walkDir(dir, skipDir = [])
+   static async *walkDir(dir, skipDir)
    {
-      const skipDirSet = new Set(skipDir);
+      let skipDirSet;
+
+      if (skipDir instanceof Set)
+      {
+         skipDirSet = skipDir;
+      }
+      else if (Array.isArray(skipDir))
+      {
+         skipDirSet = new Set(skipDir);
+      }
+      else
+      {
+         skipDirSet = new Set();
+      }
 
       for await (const d of await fs.promises.opendir(dir))
       {
@@ -420,7 +445,7 @@ export default class FileUtil
          if (d.isDirectory())
          {
             yield entry;
-            yield* FileUtil.walkDir(entry);
+            yield* FileUtil.walkDir(entry, skipDirSet);
          }
       }
    }
@@ -428,16 +453,29 @@ export default class FileUtil
    /**
     * A generator function that walks the local file tree.
     *
-    * @param {string}   dir - The directory to start walking.
+    * @param {string}      dir - The directory to start walking.
     *
-    * @param {Array}    skipDir - An array of directory names to skip walking.
+    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
     *
     * @returns {string} A file path.
     * @yields
     */
-   static async *walkFiles(dir, skipDir = [])
+   static async *walkFiles(dir, skipDir)
    {
-      const skipDirSet = new Set(skipDir);
+      let skipDirSet;
+
+      if (skipDir instanceof Set)
+      {
+         skipDirSet = skipDir;
+      }
+      else if (Array.isArray(skipDir))
+      {
+         skipDirSet = new Set(skipDir);
+      }
+      else
+      {
+         skipDirSet = new Set();
+      }
 
       for await (const d of await fs.promises.opendir(dir))
       {
@@ -451,7 +489,7 @@ export default class FileUtil
 
          if (d.isDirectory())
          {
-            yield* FileUtil.walkFiles(entry);
+            yield* FileUtil.walkFiles(entry, skipDirSet);
          }
          else if (d.isFile())
          {
