@@ -256,7 +256,7 @@ export default class FileUtil
       const mergeExternal = typeof options.mergeExternal === 'boolean' ? options.mergeExternal : true;
 
       // Make a request for any externally provided cosmiconfig plugin support.
-      const remoteCosmic = await global.$$eventbus.triggerAsync(
+      const remoteCosmic = await globalThis.$$eventbus.triggerAsync(
        'typhonjs:oclif:system:file:util:cosmic:support:get', moduleName);
 
       let mergeCosmic = [];
@@ -294,7 +294,7 @@ export default class FileUtil
 
       // Define to cosmiconfig options. Stop at the original CWD.
       const cosmicOptions = {
-         stopDir: global.$$cli_origCWD,
+         stopDir: globalThis.$$cli_origCWD,
          loaders,
          searchPlaces: searchPlacesMerge
       };
@@ -305,11 +305,11 @@ export default class FileUtil
 
       try
       {
-         result = await explorer.search(global.$$cli_baseCWD);
+         result = await explorer.search(globalThis.$$cli_baseCWD);
       }
       catch (error)
       {
-         global.$$eventbus.trigger('log:error',
+         globalThis.$$eventbus.trigger('log:error',
           `${packageName}Loading local configuration file for ${moduleName} failed...\n${error.message}`);
       }
 
@@ -322,7 +322,7 @@ export default class FileUtil
          filepath: result.filepath,
          filename: path.basename(result.filepath),
          extension: path.extname(result.filepath).toLowerCase(),
-         relativePath: FileUtil.getRelativePath(global.$$cli_baseCWD, result.filepath)
+         relativePath: FileUtil.getRelativePath(globalThis.$$cli_baseCWD, result.filepath)
       };
    }
 
@@ -370,20 +370,20 @@ export default class FileUtil
          {
             if (Object.keys(result.config).length === 0)
             {
-               global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
+               globalThis.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
                 `empty using default config:\n${result.relativePath}`);
 
                return defaultConfig;
             }
 
-            global.$$eventbus.trigger('log:verbose',
+            globalThis.$$eventbus.trigger('log:verbose',
              `${packageName}Deferring to local ${moduleName} configuration file.\n${result.relativePath}`);
 
             return result.config;
          }
          else
          {
-            global.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
+            globalThis.$$eventbus.trigger('log:warn', `${packageName}Local ${moduleName} configuration file ` +
              `malformed using default config; expected an 'object':\n${result.relativePath}`);
 
             return defaultConfig;

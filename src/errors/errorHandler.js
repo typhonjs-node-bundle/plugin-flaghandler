@@ -47,7 +47,7 @@ export default function errorHandler(error)
          const errorCode = Number.isInteger(error.$$errorCode) ? error.$$errorCode : 1;
 
          // log error message unless the log event is `log:trace`.
-         global.$$eventbus.trigger(logEvent, logEvent !== 'log:trace' ? error.message : error);
+         globalThis.$$eventbus.trigger(logEvent, logEvent !== 'log:trace' ? error.message : error);
 
          process.exit(errorCode);
       }
@@ -90,13 +90,13 @@ export default function errorHandler(error)
          switch (bitfield)
          {
             case 0:
-               message += ` ${global.$$cli_name_version}:\n${normalizedError.toString()}`;
+               message += ` ${globalThis.$$cli_name_version}:\n${normalizedError.toString()}`;
                break;
             case 1:
                message += s_MESSAGE_ONE_MODULE;
 
                message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
-               message += `CLI: ${global.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
+               message += `CLI: ${globalThis.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
                message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
                break;
 
@@ -104,7 +104,7 @@ export default function errorHandler(error)
                message += s_MESSAGE_ONE_MODULE;
 
                message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
-               message += `CLI: ${global.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
+               message += `CLI: ${globalThis.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
                message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
                break;
 
@@ -112,11 +112,11 @@ export default function errorHandler(error)
                message += s_MESSAGE_TWO_MODULE;
 
                message += `\n\n${s_MESSAGE_SEPARATOR}\n${filterPackageObj.formattedMessage}\n`;
-               message += `CLI: ${global.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
+               message += `CLI: ${globalThis.$$cli_name_version}\nError UUID: ${filterError.uuid}\n\n`;
                message += `${filterError.toString()}${s_MESSAGE_SEPARATOR}`;
 
                message += `\n\n${s_MESSAGE_SEPARATOR}\n${normalizedPackageObj.formattedMessage}\n`;
-               message += `CLI: ${global.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
+               message += `CLI: ${globalThis.$$cli_name_version}\nError UUID: ${normalizedError.uuid}\n\n`;
                message += `${normalizedError.toString()}${s_MESSAGE_SEPARATOR}`;
                break;
          }
