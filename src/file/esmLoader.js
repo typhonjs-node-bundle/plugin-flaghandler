@@ -9,28 +9,28 @@ import { getPackageType }  from '@typhonjs-node-utils/package-util';
  *
  * Uses dynamic import to load ESM files.
  *
- * @param {string}   filePath - File path to load.
+ * @param {string}   filepath - File path to load.
  *
  * @returns {Promise<*>} The imported default ESM export or CJS file by require.
  */
-export default async (filePath) =>
+export default async (filepath) =>
 {
-   const extension = path.extname(filePath).toLowerCase();
+   const extension = path.extname(filepath).toLowerCase();
 
    switch (extension)
    {
       case '.js':
          // Attempt to load `.js` file as ESM if 'package.type' is 'module'.
-         if (getPackageType(filePath) === 'module')
+         if (getPackageType({ filepath }) === 'module')
          {
-            return esmLoader(filePath);
+            return esmLoader(filepath);
          }
 
          // Otherwise use require and consider it CJS.
-         return require(filePath);
+         return require(filepath);
 
       case '.mjs':
-         return esmLoader(filePath);
+         return esmLoader(filepath);
    }
 };
 
