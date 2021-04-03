@@ -3,8 +3,6 @@ import { NonFatalError }   from '@typhonjs-oclif/errors';
 import LoggerMod           from 'typhonjs-color-logger';
 import PackageUtil         from '@typhonjs-node-utils/package-util';
 
-import errorParser         from '@typhonjs-node-utils/error-parser';
-
 import { config, CLIError, ExitError } from '@oclif/core/lib/errors/index.js';
 
 const logger = LoggerMod.default;
@@ -55,8 +53,8 @@ export default function errorHandler(error)
       }
 
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
-      const normalizedError = errorParser.normalize({ error });
-      const filterError = errorParser.filter({ error });
+      const normalizedError = globalThis.$$errorParser.normalize({ error });
+      const filterError = globalThis.$$errorParser.filter({ error });
 
       // Do not print a formatted message if the error is an Oclif error.
       // TODO: what about PrettyPrintableError that has extra data?

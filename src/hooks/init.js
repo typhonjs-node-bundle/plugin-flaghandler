@@ -2,7 +2,7 @@ import path                from 'path';
 import os                  from 'os';
 
 import Events              from 'backbone-esnext-events';
-import errorParser         from '@typhonjs-node-utils/error-parser';
+import { ErrorParser }     from '@typhonjs-node-utils/error-parser';
 import PackageUtil         from '@typhonjs-node-utils/package-util';
 import PluginManager       from 'typhonjs-plugin-manager';
 
@@ -28,6 +28,8 @@ export default async function(options)
       globalThis.$$cli_version = options.config.version;
       globalThis.$$cli_name_version = `${globalThis.$$cli_name} (${globalThis.$$cli_version})`;
 
+      globalThis.$$errorParser = new ErrorParser();
+
       const logLevel = options.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
 
       // Save base executing path immediately before anything else occurs w/ CLI / Oclif.
@@ -47,7 +49,7 @@ export default async function(options)
 
       globalThis.$$pluginManager.add({
          name: '@typhonjs-node-utils/error-parser',
-         instance: errorParser,
+         instance: globalThis.$$errorParser,
          options: {
             // Adds an exclusive filters which remove `@typhonjs-oclif/core` & `@oclif/core` from being the source of
             // a filtered error.
