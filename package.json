@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "typhonrt",
   "bugs": "https://github.com/typhonjs-oclif/core/issues",
   "type": "module",
