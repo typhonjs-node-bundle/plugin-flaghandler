@@ -25,7 +25,7 @@ To aid your search on the issue forum you can make a search with the UUID associ
 to find any duplicate report.`;
 
 const s_MESSAGE_SEPARATOR =
- '---------------------------------------------------------------------------------------------------';
+   '---------------------------------------------------------------------------------------------------';
 
 /**
  * Adds the essential handling from the Oclif error handler with the addition of logging better errors based
@@ -58,9 +58,11 @@ export default function errorHandler(error)
       const normalizedError = errorParser.normalize({ error });
       const filterError = errorParser.filter({ error });
 
-      const shouldPrint = !(error instanceof ExitError);
+      // Do not print a formatted message if the error is an Oclif error.
+      // TODO: what about PrettyPrintableError that has extra data?
+      const prettyPrint = !(error instanceof ExitError) && !(error instanceof CLIError);
 
-      if (shouldPrint)
+      if (prettyPrint)
       {
          // Attempt to find the `package.json` from first file path in the normalized error.
          const normalizedPackageObj = PackageUtil.getPackageAndFormat({
@@ -123,6 +125,10 @@ export default function errorHandler(error)
 
          // Log any uncaught errors as fatal.
          logger.fatal(message, '\n');
+      }
+      else
+      {
+         logger.fatal(error.message);
       }
 
       // Handling of Oclif errors and specific error logger installed.
