@@ -68,9 +68,7 @@ export default class FileUtil
          results.push(path.resolve(p));
       }
 
-      if (sort) { s_PATH_SORT(results); }
-
-      return results;
+      return sort ? s_PATH_SORT(results) : results;
    }
 
    /**
@@ -95,9 +93,7 @@ export default class FileUtil
          results.push(path.resolve(p));
       }
 
-      if (sort) { s_PATH_SORT(results); }
-
-      return results;
+      return sort ? s_PATH_SORT(results) : results;
    }
 
    /**
