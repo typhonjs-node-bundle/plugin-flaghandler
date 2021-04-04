@@ -192,7 +192,9 @@ class DynamicCommand extends Command
             results += this._commandData.toStringNoop();
          }
 
-         results += `\n${this.toStringNoop()}`;
+         const localStringNoop = this.toStringNoop();
+
+         results += `${localStringNoop !== '' ? '\n' : ''}${localStringNoop}`;
 
          results += `-----------------------------------`;
 

@@ -68,7 +68,7 @@ export default class FileUtil
          results.push(path.resolve(p));
       }
 
-      if (sort) { results.sort(); }
+      if (sort) { s_PATH_SORT(results); }
 
       return results;
    }
@@ -95,7 +95,7 @@ export default class FileUtil
          results.push(path.resolve(p));
       }
 
-      if (sort) { results.sort(); }
+      if (sort) { s_PATH_SORT(results); }
 
       return results;
    }
@@ -525,4 +525,44 @@ export default class FileUtil
       eventbus.on(`typhonjs:oclif:system:file:util:dir:walk`, FileUtil.walkDir, FileUtil);
       eventbus.on(`typhonjs:oclif:system:file:util:files:walk`, FileUtil.walkFiles, FileUtil);
    }
+}
+
+/**
+ * Provides a sorting function for Array.sort() for file / dir paths.
+ *
+ * @param {string[]}   a - left side
+ * @param {string[]}   b - right side
+ *
+ * @returns {number} sort priority.
+ */
+function s_SORTER(a, b)
+{
+   const length = Math.max(a.length, b.length);
+
+   for (let i = 0; i < length; i += 1)
+   {
+      if (!(i in a)) { return -1; }
+      if (!(i in b)) { return +1; }
+      if (a[i].toUpperCase() > b[i].toUpperCase()) { return +1; }
+      if (a[i].toUpperCase() < b[i].toUpperCase()) { return -1; }
+      if (a.length < b.length) { return -1; }
+      if (a.length > b.length) { return +1; }
+   }
+
+   if (a.length < b.length) { return -1; }
+   if (a.length > b.length) { return +1; }
+
+   return 0;
+}
+
+/**
+ * @param {string[]} paths - Array of string paths.
+ *
+ * @param {string}   [sep=path.sep] - A string path separator.
+ *
+ * @returns {*} Sorted array of string paths.
+ */
+function s_PATH_SORT(paths, sep = path.sep)
+{
+   return paths.map((el) => el.split(sep)).sort(s_SORTER).map((el) => el.join(sep));
 }
