@@ -129,8 +129,15 @@ class DynamicCommand extends Command
          {
             globalThis.$$eventbus.trigger('log:verbose', `Loading environment variables from: \n${logEnvFilePath}`);
 
+            // Store current environment variable keys.
+            const beforeEnvKeys = Object.keys(process.env);
+
             // Potentially load environment variables from a *.env file.
             const env = dotenv.config({ path: envFilePath });
+
+            // Detect which new environment keys were added.
+            globalThis.$$process_env_key_change = Object.keys(process.env).filter((x) => !beforeEnvKeys.includes(x));
+
             if (env.error)
             {
                this.error(`An error occurred with 'dotenv' when loading environment file: \n${env.error.message}`);
@@ -240,7 +247,7 @@ class DynamicCommand extends Command
 
          if (!fs.existsSync(globalThis.$$cli_baseCWD))
          {
-            throw new NonFatalError(`New current working directory does not exist.`);
+            throw new NonFatalError(`New current working directory does not exist:\n${globalThis.$$cli_logCWD}`);
          }
       }
 

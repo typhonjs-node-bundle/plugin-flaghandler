@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "author": "typhonrt",
   "bugs": "https://github.com/typhonjs-oclif/core/issues",
   "type": "module",
@@ -17,6 +17,7 @@
   "exports": {
     ".": "./src/index.js",
     "./errorHandler": "./src/errors/errorHandler.js",
+    "./finallyHandler": "./src/errors/finallyHandler.js",
     "./FileUtil": "./src/file/FileUtil.js",
     "./FlagHandler": "./src/flags/FlagHandler.js",
     "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",

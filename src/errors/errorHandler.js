@@ -29,14 +29,22 @@ const s_MESSAGE_SEPARATOR =
  * Adds the essential handling from the Oclif error handler with the addition of logging better errors based
  * on stack trace normalization / filtering and lookup for any associated package.json / modules.
  *
- * @param {Error} error - Error to handle / log.
+ * @param {Error}    error - Error to handle / log.
+ *
+ * @param {boolean}  [processExit=true] - Set to false to log errors and not exit process except for SIGINT.
  *
  * @see @typhonjs-node-utils/error-parser - for filtering capabilities.
  */
-export default function errorHandler(error)
+export default function errorHandler(error, processExit = true)
 {
    try
    {
+      // Handle removing any temporary environment variables added as a configuration option.
+      if (Array.isArray(globalThis.$$process_env_key_change))
+      {
+         globalThis.$$process_env_key_change.forEach((entry) => delete process.env[entry]);
+      }
+
       if (!error) { error = new CLIError('no error?'); }
       if (error.message === 'SIGINT') { process.exit(1); }
 
@@ -49,7 +57,14 @@ export default function errorHandler(error)
          // log error message unless the log event is `log:trace`.
          globalThis.$$eventbus.trigger(logEvent, logEvent !== 'log:trace' ? error.message : error);
 
-         process.exit(errorCode);
+         if (processExit)
+         {
+            process.exit(errorCode);
+         }
+         else
+         {
+            return;
+         }
       }
 
       // Acquire trace info from '@typhonjs-node-utils/error-parser'
@@ -140,18 +155,18 @@ export default function errorHandler(error)
          }
 
          config.errorLogger.flush()
-            .then(() => process.exit(exitCode))
+            .then(() => { if (processExit) { process.exit(exitCode); } })
             .catch(console.error);
       }
       else
       {
-         process.exit(exitCode);
+         if (processExit) { process.exit(exitCode); }
       }
    }
    catch (err)
    {
       console.error(error.stack);
       console.error(err.stack);
-      process.exit(1);
+      if (processExit) { process.exit(1); }
    }
 }
