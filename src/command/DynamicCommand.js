@@ -15,10 +15,11 @@ class DynamicCommand extends Command
     * Performs any final steps before the command execution completes. This is useful for logging any data
     * in response to the `--metafile` flag.
     */
-   async finalize()
+   async finally()
    {
       // Write any log metafiles on finalize.
-      if (typeof this._cliFlags.metafile === 'boolean' && this._cliFlags.metafile)
+      if (typeof globalThis.$$eventbus !== void 0 && typeof this._cliFlags.metafile === 'boolean' &&
+         this._cliFlags.metafile)
       {
          await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:log:util:metafiles:write', this);
       }
@@ -58,20 +59,28 @@ class DynamicCommand extends Command
     */
    static async loadDynamicFlags(CommandClass, config, loadDefault = true)
    {
-      const initHook = CommandClass._initHook;
-      if (typeof initHook === 'string')
-      {
-         // Run any custom init hook for all Oclif bundle plugins to load respective bundler plugins.
-         await config.runHook(initHook, { id: this.id, flagsModule: '@oclif/core/lib/flags.js' });
-      }
+      const commandData = CommandClass._dynamicCommand;
 
       let flags = {};
 
-      const flagCommands = CommandClass._flagCommands;
-      if (Array.isArray(flagCommands) && typeof globalThis.$$eventbus !== 'undefined')
+      if (typeof commandData === 'object')
       {
-         // Dynamically load flags for the command from oclif-flaghandler.
-         flags = globalThis.$$eventbus.triggerSync('typhonjs:oclif:system:flaghandler:get', { commands: flagCommands });
+         if (Array.isArray(commandData.initHooks))
+         {
+            for (const hook of commandData.initHooks)
+            {
+               // Run any custom init hook for all Oclif bundle plugins to load respective bundler plugins.
+               await config.runHook(hook, { id: this.id, flagsModule: '@oclif/core/lib/flags.js' });
+            }
+         }
+
+         if (typeof globalThis.$$eventbus !== void 0 && Array.isArray(commandData.flagCommands))
+         {
+            // Dynamically load flags for the command from oclif-flaghandler.
+            flags = globalThis.$$eventbus.triggerSync('typhonjs:oclif:system:flaghandler:get', {
+               commands: commandData.flagCommands
+            });
+         }
       }
 
       const defaultData = loadDefault ? null : void 0;
@@ -155,30 +164,35 @@ class DynamicCommand extends Command
 
    /**
     * Performs all initialization, loading of flags from *.env file via dotenv and verification of flags.
-    *
-    * @param {object}   options - Options object.
-    *
-    * @param {string[]} options.commands - The actual command names.
-    *
-    * @param {string}   options.event - The event to fire with parsed flags to load command data.
-    *
-    * @returns {object} Parsed and verified flags.
-    *
-    * @protected
     */
-   async initialize(options)
+   async init()
    {
-      const commands = Array.isArray(options.commands) ? options.commands : null;
-      const event = typeof options.event === 'string' ? options.event : null;
+      this._cliFlags = {};
 
-      // Parse dynamic flags for all command names
-      this._cliFlags = commands !== null ? await this._initializeFlags(commands) : {};
+      const commandData = this.constructor._dynamicCommand;
 
-      // If an event path is provided then fire it off to load command data.
-      if (event !== null)
+      if (typeof commandData === 'object')
       {
-         this._commandData = await globalThis.$$eventbus.triggerAsync(event, this._cliFlags,
-          globalThis.$$cli_baseCWD, globalThis.$$cli_origCWD);
+         if (Array.isArray(commandData.initHooks))
+         {
+            for (const hook of commandData.initHooks)
+            {
+               // Run any custom init hooks.
+               await this.config.runHook(hook, { id: this.id, flagsModule: '@oclif/core/lib/flags.js' });
+            }
+         }
+
+         if (Array.isArray(commandData.flagCommands))
+         {
+            this._cliFlags = await this._initializeFlags(commandData.flagCommands);
+         }
+
+         // If an event path is provided then fire it off to load command data.
+         if (typeof commandData.eventData === 'string')
+         {
+            this._commandData = await globalThis.$$eventbus.triggerAsync(commandData.eventData, this._cliFlags,
+               globalThis.$$cli_baseCWD, globalThis.$$cli_origCWD);
+         }
       }
 
       // Handle noop / no operation flag / Exit out now!
@@ -242,9 +256,6 @@ class DynamicCommand extends Command
          // Only log absolute path if the CWD location is outside of the original path.
          globalThis.$$cli_logCWD = newCWD.startsWith(origCWD) ? path.relative(origCWD, newCWD) : newCWD;
 
-         globalThis.$$eventbus.trigger('log:verbose',
-          `New current working directory set: \n${globalThis.$$cli_logCWD}`);
-
          if (!fs.existsSync(globalThis.$$cli_baseCWD))
          {
             throw new NonFatalError(`New current working directory does not exist:\n${globalThis.$$cli_logCWD}`);
@@ -256,6 +267,13 @@ class DynamicCommand extends Command
 
       // Verify flags given any plugin provided verify functions in FlagHandler.
       eventbus.triggerSync('typhonjs:oclif:system:flaghandler:verify', { commands, flags });
+
+      // Be sure to log after flags are verified and any log level is set for CWD.
+      if (typeof flags.cwd === 'string' && flags.cwd !== '.')
+      {
+         globalThis.$$eventbus.trigger('log:verbose',
+          `New current working directory set: \n${globalThis.$$cli_logCWD}`);
+      }
 
       return flags;
    }
