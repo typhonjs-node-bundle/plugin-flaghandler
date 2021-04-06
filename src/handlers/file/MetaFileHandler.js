@@ -10,7 +10,7 @@ const FileUtil = FileUtilMod.default;
 /**
  * Provides a few utility functions to walk the local file tree.
  */
-export default class LogUtil
+export default class MetaFileHandler
 {
    /**
     * Writes out a time stamped compressed file including the CLI config, CLI flags, CLI command data to users home
@@ -72,7 +72,7 @@ export default class LogUtil
             continue;
          }
 
-         if (typeof command[data.key] === 'undefined')
+         if (command[data.key] === void 0)
          {
             globalThis.$$eventbus.trigger('log:warn',
              `Skipping <CommandClass>._metaFileData index ${cntr} as key '${data.key}' not found in command.`);
@@ -90,7 +90,7 @@ export default class LogUtil
    }
 
    /**
-    * Wires up LogUtil on the plugin eventbus.
+    * Wires up MetaFileHandler on the plugin eventbus.
     *
     * @param {object} ev - PluginEvent - The plugin event.
     *
@@ -100,6 +100,6 @@ export default class LogUtil
     */
    static onPluginLoad(ev)
    {
-      ev.eventbus.on(`typhonjs:oclif:system:log:util:metafiles:write`, LogUtil.writeMetafiles, LogUtil);
+      ev.eventbus.on(`typhonjs:oclif:system:handler:metafile:write`, MetaFileHandler.writeMetafiles, MetaFileHandler);
    }
 }

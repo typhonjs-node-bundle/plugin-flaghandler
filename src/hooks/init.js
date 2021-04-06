@@ -7,9 +7,9 @@ import PackageUtil         from '@typhonjs-node-utils/package-util';
 import PluginManager       from 'typhonjs-plugin-manager';
 
 import FileUtil            from '../file/FileUtil.js';
-import LogUtil             from '../file/LogUtil.js';
+import MetaFileHandler     from '../handlers/file/MetaFileHandler.js';
 
-import FlagHandler         from '../flags/FlagHandler.js';
+import FlagHandler         from '../handlers/flag/FlagHandler.js';
 
 const s_DEFAULT_LOG_LEVEL = 'info';
 
@@ -76,7 +76,7 @@ export default async function(options)
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/LogUtil', instance: LogUtil });
+      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FlagHandler', instance: new FlagHandler() });
    }

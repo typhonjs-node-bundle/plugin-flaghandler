@@ -18,10 +18,10 @@ class DynamicCommand extends Command
    async finally()
    {
       // Write any log metafiles on finalize.
-      if (typeof globalThis.$$eventbus !== void 0 && typeof this._cliFlags.metafile === 'boolean' &&
-         this._cliFlags.metafile)
+      if (globalThis.$$eventbus !== void 0 && typeof this._cliFlags.metafile === 'boolean' &&
+       this._cliFlags.metafile)
       {
-         await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:log:util:metafiles:write', this);
+         await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:handler:metafile:write', this);
       }
    }
 
@@ -74,7 +74,7 @@ class DynamicCommand extends Command
             }
          }
 
-         if (typeof globalThis.$$eventbus !== void 0 && Array.isArray(commandData.flagCommands))
+         if (globalThis.$$eventbus !== void 0 && Array.isArray(commandData.flagCommands))
          {
             // Dynamically load flags for the command from oclif-flaghandler.
             flags = globalThis.$$eventbus.triggerSync('typhonjs:oclif:system:flaghandler:get', {

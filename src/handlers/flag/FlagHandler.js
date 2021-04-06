@@ -219,24 +219,6 @@ export default class FlagHandler
    }
 
    /**
-    * Wires up FlagHandler on the plugin eventbus.
-    *
-    * @param {object} ev - PluginEvent - The plugin event.
-    *
-    * @see https://www.npmjs.com/package/typhonjs-plugin-manager
-    *
-    * @ignore
-    */
-   onPluginLoad(ev)
-   {
-      const eventbus = ev.eventbus;
-
-      eventbus.on(`typhonjs:oclif:system:flaghandler:add`, this.addFlags, this);
-      eventbus.on(`typhonjs:oclif:system:flaghandler:get`, this.getFlags, this);
-      eventbus.on(`typhonjs:oclif:system:flaghandler:verify`, this.verifyFlags, this);
-   }
-
-   /**
     * Invokes any stored Oclif plugin verification functions against the final command flags.
     *
     * @param {object}   query - Query object
@@ -286,5 +268,23 @@ export default class FlagHandler
             }
          }
       }
+   }
+
+   /**
+    * Wires up FlagHandler on the plugin eventbus.
+    *
+    * @param {object} ev - PluginEvent - The plugin event.
+    *
+    * @see https://www.npmjs.com/package/typhonjs-plugin-manager
+    *
+    * @ignore
+    */
+   onPluginLoad(ev)
+   {
+      const eventbus = ev.eventbus;
+
+      eventbus.on(`typhonjs:oclif:system:flaghandler:add`, this.addFlags, this);
+      eventbus.on(`typhonjs:oclif:system:flaghandler:get`, this.getFlags, this);
+      eventbus.on(`typhonjs:oclif:system:flaghandler:verify`, this.verifyFlags, this);
    }
 }
