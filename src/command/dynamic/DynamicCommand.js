@@ -168,6 +168,7 @@ class DynamicCommand extends Command
    async init()
    {
       this._cliFlags = {};
+      this._commandData = {};
 
       const commandData = this.constructor._dynamicCommand;
 
@@ -198,22 +199,16 @@ class DynamicCommand extends Command
       // Handle noop / no operation flag / Exit out now!
       if (typeof this._cliFlags.noop === 'boolean' && this._cliFlags.noop)
       {
-         // Write any log metafiles before handling noop flag.
-         if (typeof this._cliFlags.metafile === 'boolean' && this._cliFlags.metafile)
-         {
-            await globalThis.$$eventbus.triggerAsync('typhonjs:oclif:system:log:util:metafiles:write', this);
-         }
-
          let results = `-----------------------------------\n`;
          results += `${globalThis.$$cli_name_version} running: '${this.id}' - `;
 
          // Attempt to get abbreviated noop description from command data.
-         if (this._commandData && typeof this._commandData.toStringNoop === 'function')
+         if (this._commandData && typeof this._commandData.toString === 'function')
          {
-            results += this._commandData.toStringNoop();
+            results += this._commandData.toString();
          }
 
-         const localStringNoop = this.toStringNoop();
+         const localStringNoop = this.toString();
 
          results += `${localStringNoop !== '' ? '\n' : ''}${localStringNoop}`;
 
@@ -279,11 +274,11 @@ class DynamicCommand extends Command
    }
 
    /**
-    * Provides the base method to be overridden to provide per command implementation details for noop flag.
+    * Provides the base method to be overridden to provide per command implementation details.
     *
-    * @returns {string} - A string containing any noop description.
+    * @returns {string} - A string containing a description of the command.
     */
-   toStringNoop()
+   toString()
    {
       return '';
    }

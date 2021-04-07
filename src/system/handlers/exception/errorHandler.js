@@ -1,9 +1,9 @@
+import { Errors }          from '@oclif/core';
+
 import { NonFatalError }   from '@typhonjs-oclif/errors';
 
 import LoggerMod           from 'typhonjs-color-logger';
 import PackageUtil         from '@typhonjs-node-utils/package-util';
-
-import { config, CLIError, ExitError } from '@oclif/core/lib/errors/index.js';
 
 const logger = LoggerMod.default;
 
@@ -45,7 +45,7 @@ export default function errorHandler(error, processExit = true)
          globalThis.$$process_env_key_change.forEach((entry) => delete process.env[entry]);
       }
 
-      if (!error) { error = new CLIError('no error?'); }
+      if (!error) { error = new Errors.CLIError('no error?'); }
       if (error.message === 'SIGINT') { process.exit(1); }
 
       // Handle TyphonJS NonFatalError
@@ -73,7 +73,7 @@ export default function errorHandler(error, processExit = true)
 
       // Do not print a formatted message if the error is an Oclif error.
       // TODO: what about PrettyPrintableError that has extra data?
-      const prettyPrint = !(error instanceof ExitError) && !(error instanceof CLIError);
+      const prettyPrint = !(error instanceof Errors.ExitError) && !(error instanceof Errors.CLIError);
 
       if (prettyPrint)
       {
@@ -147,14 +147,14 @@ export default function errorHandler(error, processExit = true)
       // Handling of Oclif errors and specific error logger installed.
       const exitCode = error.oclif?.exit !== void 0 && error.oclif?.exit !== false ? error.oclif?.exit : 1;
 
-      if (config.errorLogger && error.code !== 'EEXIT')
+      if (Errors.config.errorLogger && error.code !== 'EEXIT')
       {
          if (normalizedError)
          {
-            config.errorLogger.log(normalizedError.toString());
+            Errors.config.errorLogger.log(normalizedError.toString());
          }
 
-         config.errorLogger.flush()
+         Errors.config.errorLogger.flush()
             .then(() => { if (processExit) { process.exit(exitCode); } })
             .catch(console.error);
       }

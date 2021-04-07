@@ -42,7 +42,7 @@ export default class Help
    /**
     * @param {Interfaces.Config} config -
     *
-    * @param {Partial<Interfaces.HelpOptions>}  opts -
+    * @param {Interfaces.HelpOptions}  opts -
     */
    constructor(config, opts = {})
    {
@@ -54,7 +54,7 @@ export default class Help
       this.config = config;
 
       /**
-       * @type {Partial<Interfaces.HelpOptions>}
+       * @type {Interfaces.HelpOptions}
        */
       this.opts = { maxWidth: stdtermwidth, ...opts };
 

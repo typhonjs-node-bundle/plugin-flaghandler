@@ -1,6 +1,4 @@
-export { default as DynamicCommand }      from './command/DynamicCommand.js';
-export { default as FileUtil }            from './file/FileUtil.js';
-export { default as errorHandler }        from './handlers/exception/errorHandler.js';
-export { default as finallyHandler }      from './handlers/exception/finallyHandler.js';
-export { default as DynamicCommandHelp }  from './help/DynamicCommandHelp.js';
-export { default as Help }                from './help/Help.js';
+export { default as DynamicCommand }      from './command/dynamic/DynamicCommand.js';
+export { default as DynamicCommandFlags } from './command/dynamic/DynamicCommandFlags.js';
+export { default as errorHandler }        from './system/handlers/exception/errorHandler.js';
+export { default as finallyHandler }      from './system/handlers/exception/finallyHandler.js';

@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "author": "typhonrt",
   "bugs": "https://github.com/typhonjs-oclif/core/issues",
   "type": "module",
@@ -16,13 +16,10 @@
   ],
   "exports": {
     ".": "./src/index.js",
-    "./errorHandler": "./src/handlers/exception/errorHandler.js",
-    "./finallyHandler": "./src/handlers/exception/finallyHandler.js",
-    "./FileUtil": "./src/file/FileUtil.js",
-    "./DynamicCommandHelp": "./src/help/DynamicCommandHelp.js",
-    "./Help": "./src/help/Help.js",
+    "./DynamicCommandHelp": "./src/command/dynamic/DynamicCommandHelp.js",
     "./hooks/init": "./src/hooks/init.js"
   },
+
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
     "@typhonjs-node-utils/error-parser": "^0.0.3",
@@ -39,7 +36,7 @@
     "@typhonjs-node-utils/build-test": "^0.1.0"
   },
   "engines": {
-    "node": ">=14.0.0",
+    "node": ">=14.13.0",
     "npm": ">=7.0.0"
   },
   "files": [

@@ -7,11 +7,11 @@ import PackageUtil         from '@typhonjs-node-utils/package-util';
 import PluginManager       from 'typhonjs-plugin-manager';
 
 import FileUtil            from '../file/FileUtil.js';
-import MetaFileHandler     from '../handlers/file/MetaFileHandler.js';
+import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
 
-import FlagHandler         from '../handlers/flag/FlagHandler.js';
+import FlagHandler         from '../system/handlers/flag/FlagHandler.js';
 
-const s_DEFAULT_LOG_LEVEL = 'info';
+import defaultLogLevel     from '../data/defaultLogLevel.js';
 
 /**
  * Initializes a TyphonJS CLI with a plugin manager and eventbus and several default plugins.
@@ -30,7 +30,7 @@ export default async function(options)
 
       globalThis.$$errorParser = new ErrorParser();
 
-      const logLevel = options.config?.debug === 1 ? 'debug' : s_DEFAULT_LOG_LEVEL;
+      const logLevel = options.config?.debug === 1 ? 'debug' : defaultLogLevel;
 
       // Save base executing path immediately before anything else occurs w/ CLI / Oclif.
       globalThis.$$cli_baseCWD = globalThis.$$cli_origCWD = process.cwd();
