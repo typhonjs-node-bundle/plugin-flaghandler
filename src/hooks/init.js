@@ -1,9 +1,10 @@
 import path                from 'path';
 import os                  from 'os';
 
-import Events              from 'backbone-esnext-events';
+import Cosmiconfig         from '@typhonjs-node-utils/cosmiconfig';
 import { ErrorParser }     from '@typhonjs-node-utils/error-parser';
 import PackageUtil         from '@typhonjs-node-utils/package-util';
+import Events              from 'backbone-esnext-events';
 import PluginManager       from 'typhonjs-plugin-manager';
 
 import FileUtil            from '../file/FileUtil.js';
@@ -71,6 +72,8 @@ export default async function(options)
       globalThis.$$eventbus.trigger('log:debug', `TyphonJS CLI init hook running '${options.id}'.`);
 
       s_SET_VERSION();
+
+      globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/cosmiconfig', instance: new Cosmiconfig() });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/package-util', instance: PackageUtil });
 
