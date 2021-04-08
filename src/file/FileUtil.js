@@ -2,10 +2,10 @@ import fs                from 'fs';
 import path              from 'path';
 import { fileURLToPath } from 'url';
 
-const s_BABEL_CONFIG = new Set(['.babelrc', '.babelrc.cjs', '.babelrc.js', '.babelrc.mjs', '.babelrc.json',
- 'babel.config.cjs', 'babel.config.js', 'babel.config.json', 'babel.config.mjs']);
-
-const s_TSC_CONFIG = new Set(['tsconfig.json', 'jsconfig.json']);
+// const s_BABEL_CONFIG = new Set(['.babelrc', '.babelrc.cjs', '.babelrc.js', '.babelrc.mjs', '.babelrc.json',
+//  'babel.config.cjs', 'babel.config.js', 'babel.config.json', 'babel.config.mjs']);
+//
+// const s_TSC_CONFIG = new Set(['tsconfig.json', 'jsconfig.json']);
 
 /**
  * Provides a few utility functions to walk the local file tree.
@@ -142,51 +142,51 @@ export default class FileUtil
       return false;
    }
 
-   /**
-    * Searches all files from starting directory skipping any directories in `skipDir` and those starting with `.`
-    * in an attempt to locate a Babel configuration file. If a Babel configuration file is found `true` is
-    * immediately returned.
-    *
-    * @param {string}      dir - Directory to walk.
-    *
-    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
-    *
-    * @returns {Promise<boolean>} Whether a Babel configuration file was found.
-    */
-   static async hasBabelConfig(dir = '.', skipDir)
-   {
-      for await (const p of FileUtil.walkFiles(dir, skipDir))
-      {
-         if (s_BABEL_CONFIG.has(path.basename(p)))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   /**
-    * Searches all files from starting directory skipping any directories in `skipDir` and those starting with `.`
-    * in an attempt to locate a Typescript configuration file. If a configuration file is found `true` is
-    * immediately returned.
-    *
-    * @param {string}      dir - Directory to walk.
-    *
-    * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
-    *
-    * @returns {Promise<boolean>} Whether a Typescript configuration file was found.
-    */
-   static async hasTscConfig(dir = '.', skipDir)
-   {
-      for await (const p of FileUtil.walkFiles(dir, skipDir))
-      {
-         if (s_TSC_CONFIG.has(path.basename(p)))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+   // /**
+   //  * Searches all files from starting directory skipping any directories in `skipDir` and those starting with `.`
+   //  * in an attempt to locate a Babel configuration file. If a Babel configuration file is found `true` is
+   //  * immediately returned.
+   //  *
+   //  * @param {string}      dir - Directory to walk.
+   //  *
+   //  * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
+   //  *
+   //  * @returns {Promise<boolean>} Whether a Babel configuration file was found.
+   //  */
+   // static async hasBabelConfig(dir = '.', skipDir)
+   // {
+   //    for await (const p of FileUtil.walkFiles(dir, skipDir))
+   //    {
+   //       if (s_BABEL_CONFIG.has(path.basename(p)))
+   //       {
+   //          return true;
+   //       }
+   //    }
+   //    return false;
+   // }
+   //
+   // /**
+   //  * Searches all files from starting directory skipping any directories in `skipDir` and those starting with `.`
+   //  * in an attempt to locate a Typescript configuration file. If a configuration file is found `true` is
+   //  * immediately returned.
+   //  *
+   //  * @param {string}      dir - Directory to walk.
+   //  *
+   //  * @param {Array|Set}   [skipDir] - An array or Set of directory names to skip walking.
+   //  *
+   //  * @returns {Promise<boolean>} Whether a Typescript configuration file was found.
+   //  */
+   // static async hasTscConfig(dir = '.', skipDir)
+   // {
+   //    for await (const p of FileUtil.walkFiles(dir, skipDir))
+   //    {
+   //       if (s_TSC_CONFIG.has(path.basename(p)))
+   //       {
+   //          return true;
+   //       }
+   //    }
+   //    return false;
+   // }
 
    /**
     * A generator function that walks the local file tree.
@@ -268,15 +268,16 @@ export default class FileUtil
    {
       const eventbus = ev.eventbus;
 
-      eventbus.on(`typhonjs:oclif:system:file:util:list:dir:get`, FileUtil.getDirList, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:list:file:get`, FileUtil.getFileList, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:path:relative:get`, FileUtil.getRelativePath, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:url:path:dir:get`, FileUtil.getURLDirpath, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:url:path:file:get`, FileUtil.getURLFilepath, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:config:babel:has`, FileUtil.hasBabelConfig, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:config:typescript:has`, FileUtil.hasTscConfig, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:dir:walk`, FileUtil.walkDir, FileUtil);
-      eventbus.on(`typhonjs:oclif:system:file:util:files:walk`, FileUtil.walkFiles, FileUtil);
+      eventbus.on(`typhonjs:util:file:list:dir:get`, FileUtil.getDirList, FileUtil);
+      eventbus.on(`typhonjs:util:file:list:file:get`, FileUtil.getFileList, FileUtil);
+      eventbus.on(`typhonjs:util:file:path:relative:get`, FileUtil.getRelativePath, FileUtil);
+      eventbus.on(`typhonjs:util:file:url:path:dir:get`, FileUtil.getURLDirpath, FileUtil);
+      eventbus.on(`typhonjs:util:file:url:path:file:get`, FileUtil.getURLFilepath, FileUtil);
+      eventbus.on(`typhonjs:util:file:file:has`, FileUtil.hasFile, FileUtil);
+      // eventbus.on(`typhonjs:system:file:util:config:babel:has`, FileUtil.hasBabelConfig, FileUtil);
+      // eventbus.on(`typhonjs:system:file:util:config:typescript:has`, FileUtil.hasTscConfig, FileUtil);
+      eventbus.on(`typhonjs:util:file:dir:walk`, FileUtil.walkDir, FileUtil);
+      eventbus.on(`typhonjs:util:file:files:walk`, FileUtil.walkFiles, FileUtil);
    }
 }
 
