@@ -6,11 +6,11 @@
  *
  * There are three methods which are available on the plugin eventbus:
  *
- * `typhonjs:oclif:system:flaghandler:add` -> addFlags
+ * `typhonjs:oclif:handler:flag:add` -> addFlags
  *
- * `typhonjs:oclif:system:flaghandler:get` -> getFlags
+ * `typhonjs:oclif:handler:flag:get` -> getFlags
  *
- * `typhonjs:oclif:system:flaghandler:verify` -> verifyFlags
+ * `typhonjs:oclif:handler:flag:verify` -> verifyFlags
  */
 export default class FlagHandler
 {
@@ -283,8 +283,8 @@ export default class FlagHandler
    {
       const eventbus = ev.eventbus;
 
-      eventbus.on(`typhonjs:oclif:system:flaghandler:add`, this.addFlags, this);
-      eventbus.on(`typhonjs:oclif:system:flaghandler:get`, this.getFlags, this);
-      eventbus.on(`typhonjs:oclif:system:flaghandler:verify`, this.verifyFlags, this);
+      eventbus.on(`typhonjs:oclif:handler:flag:add`, this.addFlags, this);
+      eventbus.on(`typhonjs:oclif:handler:flag:get`, this.getFlags, this);
+      eventbus.on(`typhonjs:oclif:handler:flag:verify`, this.verifyFlags, this);
    }
 }
