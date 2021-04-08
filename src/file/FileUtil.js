@@ -6,8 +6,8 @@ import { cosmiconfig }   from 'cosmiconfig';
 
 import esmLoader         from './esmLoader.js';
 
-const s_EXT_JS = new Set(['.js', '.jsx', '.es6', '.es', '.mjs']);
-const s_EXT_TS = new Set(['.ts', '.tsx']);
+const s_EXT_JS = new Set(['.js', '.es6', '.es', '.mjs']);
+const s_EXT_TS = new Set(['.ts']);
 
 const s_BABEL_CONFIG = new Set(['.babelrc', '.babelrc.cjs', '.babelrc.js', '.babelrc.mjs', '.babelrc.json',
  'babel.config.cjs', 'babel.config.js', 'babel.config.json', 'babel.config.mjs']);
@@ -47,22 +47,22 @@ const s_DEFAULT_COSMIC_SEARCHPLACES = (moduleName) => [
 export default class FileUtil
 {
    /**
-    * Returns an array of all directories found from walking the directory tree provided.
+    * Returns an array of all absolute directory paths found from walking the directory indicated.
     *
-    * @param {object}      options - An options object.
+    * @param {object}   options - An options object.
     *
-    * @param {string}      options.dir - Directory to walk.
+    * @param {string}   [options.dir='.'] - Directory to walk; default is CWD.
     *
-    * @param {Array|Set}   [options.skipDir] - An array or Set of directory names to skip walking.
+    * @param {Set}      [options.skipDir] - An array or Set of directory names to skip walking.
     *
-    * @param {Array}       [options.results=[]] - Output array.
-    *
-    * @param {boolean}     [options.sort=true] - Sort output array.
+    * @param {boolean}  [options.sort=true] - Sort output array.
     *
     * @returns {Promise<Array>} An array of directories.
     */
-   static async getDirList({ dir = '.', skipDir, results = [], sort = true } = {})
+   static async getDirList({ dir = '.', skipDir = new Set(), sort = true } = {})
    {
+      const results = [];
+
       for await (const p of FileUtil.walkDir(dir, skipDir))
       {
          results.push(path.resolve(p));
@@ -72,22 +72,22 @@ export default class FileUtil
    }
 
    /**
-    * Returns an array of all files found from walking the directory tree provided.
+    * Returns an array of all absolute file paths found from walking the directory tree indicated.
     *
-    * @param {object}      options - An options object.
+    * @param {object}   options - An options object.
     *
-    * @param {string}      options.dir - Directory to walk.
+    * @param {string}   [options.dir='.'] - Directory to walk; default is CWD.
     *
-    * @param {Array|Set}   [options.skipDir] - An array or Set of directory names to skip walking.
+    * @param {Set}      [options.skipDir] - A Set of directory names to skip walking.
     *
-    * @param {Array}       [options.results=[]] - Output array.
-    *
-    * @param {boolean}     [options.sort=true] - Sort output array.
+    * @param {boolean}  [options.sort=true] - Sort output array.
     *
     * @returns {Promise<Array>} An array of file paths.
     */
-   static async getFileList({ dir = '.', skipDir, results = [], sort = true } = {})
+   static async getFileList({ dir = '.', skipDir = new Set(), sort = true } = {})
    {
+      const results = [];
+
       for await (const p of FileUtil.walkFiles(dir, skipDir))
       {
          results.push(path.resolve(p));
@@ -144,6 +144,36 @@ export default class FileUtil
    static getURLFilepath(url)
    {
       return fileURLToPath(url);
+   }
+
+   /**
+    * Searches all files from starting directory skipping any directories in `skipDir` and those starting with `.`
+    * in an attempt to locate a Babel configuration file. If a Babel configuration file is found `true` is
+    * immediately returned.
+    *
+    * @param {object}   options - Options object.
+    *
+    * @param {Set}      options.fileList - A Set of file names to verify existence.
+    *
+    * @param {string}   [options.dir='.'] - Directory to walk / default is CWD.
+    *
+    * @param {Set}      [options.skipDir] - A Set of directory names to skip walking.
+    *
+    * @returns {Promise<boolean>} Whether a Babel configuration file was found.
+    */
+   static async hasFile({ dir = '.', fileList, skipDir = new Set() } = {})
+   {
+      if (!(fileList instanceof Set)) { throw new TypeError(`'fileList' is not a 'Set'`); }
+      if (!(skipDir instanceof Set)) { throw new TypeError(`'skipDir' is not a 'Set'`); }
+
+      for await (const p of FileUtil.walkFiles(dir, skipDir))
+      {
+         if (fileList.has(path.basename(p)))
+         {
+            return true;
+         }
+      }
+      return false;
    }
 
    /**
@@ -411,27 +441,14 @@ export default class FileUtil
     * @returns {string} A directory path.
     * @yields
     */
-   static async *walkDir(dir, skipDir)
+   static async *walkDir(dir, skipDir = new Set())
    {
-      let skipDirSet;
-
-      if (skipDir instanceof Set)
-      {
-         skipDirSet = skipDir;
-      }
-      else if (Array.isArray(skipDir))
-      {
-         skipDirSet = new Set(skipDir);
-      }
-      else
-      {
-         skipDirSet = new Set();
-      }
+      if (!(skipDir instanceof Set)) { throw new TypeError(`'skipDir' is not a 'Set'`); }
 
       for await (const d of await fs.promises.opendir(dir))
       {
          // Skip directories in `skipMap` or any hidden directories (starts w/ `.`).
-         if (d.isDirectory() && (skipDirSet.has(d.name) || d.name.startsWith('.')))
+         if (d.isDirectory() && (skipDir.has(d.name) || d.name.startsWith('.')))
          {
             continue;
          }
@@ -441,7 +458,7 @@ export default class FileUtil
          if (d.isDirectory())
          {
             yield entry;
-            yield* FileUtil.walkDir(entry, skipDirSet);
+            yield* FileUtil.walkDir(entry, skipDir);
          }
       }
    }
@@ -456,27 +473,14 @@ export default class FileUtil
     * @returns {string} A file path.
     * @yields
     */
-   static async *walkFiles(dir, skipDir)
+   static async *walkFiles(dir, skipDir = new Set())
    {
-      let skipDirSet;
-
-      if (skipDir instanceof Set)
-      {
-         skipDirSet = skipDir;
-      }
-      else if (Array.isArray(skipDir))
-      {
-         skipDirSet = new Set(skipDir);
-      }
-      else
-      {
-         skipDirSet = new Set();
-      }
+      if (!(skipDir instanceof Set)) { throw new TypeError(`'skipDir' is not a 'Set'`); }
 
       for await (const d of await fs.promises.opendir(dir))
       {
          // Skip directories in `skipMap` or any hidden directories (starts w/ `.`).
-         if (d.isDirectory() && (skipDirSet.has(d.name) || d.name.startsWith('.')))
+         if (d.isDirectory() && (skipDir.has(d.name) || d.name.startsWith('.')))
          {
             continue;
          }
@@ -485,7 +489,7 @@ export default class FileUtil
 
          if (d.isDirectory())
          {
-            yield* FileUtil.walkFiles(entry, skipDirSet);
+            yield* FileUtil.walkFiles(entry, skipDir);
          }
          else if (d.isFile())
          {

@@ -19,9 +19,9 @@
     "./DynamicCommandHelp": "./src/command/dynamic/DynamicCommandHelp.js",
     "./hooks/init": "./src/hooks/init.js"
   },
-
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
+    "@typhonjs-node-utils/cosmiconfig": "typhonjs-node-utils/cosmiconfig",
     "@typhonjs-node-utils/error-parser": "^0.0.3",
     "@typhonjs-node-utils/package-util": "^0.0.9",
     "@typhonjs-oclif/errors": "^0.0.0",
