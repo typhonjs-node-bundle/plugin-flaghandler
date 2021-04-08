@@ -26,7 +26,6 @@
     "@typhonjs-node-utils/package-util": "^0.0.9",
     "@typhonjs-oclif/errors": "^0.0.0",
     "backbone-esnext-events": "^0.3.0",
-    "cosmiconfig": "^7.0.0",
     "dotenv": "^8.0.0",
     "typhonjs-color-logger": "^0.0.13",
     "typhonjs-file-util": "^0.0.11",
