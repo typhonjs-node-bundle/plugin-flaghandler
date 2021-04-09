@@ -7,7 +7,9 @@ import PackageUtil         from '@typhonjs-node-utils/package-util';
 import Events              from 'backbone-esnext-events';
 import PluginManager       from 'typhonjs-plugin-manager';
 
-import FileUtil            from '../file/FileUtil.js';
+// import FileUtil            from '../file/FileUtil.js';
+import FileUtil            from '../file/index.js';
+
 import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
 
 import FlagHandler         from '../system/handlers/flag/FlagHandler.js';
