@@ -33,7 +33,7 @@ const s_MESSAGE_SEPARATOR =
  *
  * @param {boolean}  [processExit=true] - Set to false to log errors and not exit process except for SIGINT.
  *
- * @see @typhonjs-node-utils/error-parser - for filtering capabilities.
+ * @see @typhonjs-utils/error-parser - for filtering capabilities.
  */
 export default function errorHandler(error, processExit = true)
 {
@@ -67,7 +67,7 @@ export default function errorHandler(error, processExit = true)
          }
       }
 
-      // Acquire trace info from '@typhonjs-node-utils/error-parser'
+      // Acquire trace info from '@typhonjs-utils/error-parser'
       const normalizedError = globalThis.$$errorParser.normalize({ error });
       const filterError = globalThis.$$errorParser.filter({ error });
 

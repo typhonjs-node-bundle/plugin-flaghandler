@@ -1,9 +1,9 @@
 import path                from 'path';
 import os                  from 'os';
 
-import { ErrorParser }     from '@typhonjs-node-utils/error-parser';
 import PluginManager       from '@typhonjs-plugin/manager';
 import Cosmiconfig         from '@typhonjs-utils/cosmiconfig';
+import { ErrorParser }     from '@typhonjs-utils/error-parser';
 import FileUtil            from '@typhonjs-utils/file-util/plugin';
 import PackageUtil         from '@typhonjs-utils/package-json';
 
@@ -48,7 +48,7 @@ export default async function(options)
       await globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
 
       await globalThis.$$pluginManager.add({
-         name: '@typhonjs-node-utils/error-parser',
+         name: '@typhonjs-utils/error-parser',
          instance: globalThis.$$errorParser,
          options: {
             // Adds an exclusive filters which remove `@typhonjs-oclif/core` & `@oclif/core` from being the source of
