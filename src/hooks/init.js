@@ -46,9 +46,9 @@ export default async function(options)
       globalThis.$$eventbus = globalThis.$$pluginManager.getEventbus();
 
       // Adds color logger plugin
-      globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
+      await globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
 
-      globalThis.$$pluginManager.add({
+      await globalThis.$$pluginManager.add({
          name: '@typhonjs-node-utils/error-parser',
          instance: globalThis.$$errorParser,
          options: {
@@ -73,15 +73,15 @@ export default async function(options)
 
       s_SET_VERSION();
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/cosmiconfig', instance: new Cosmiconfig() });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/cosmiconfig', instance: new Cosmiconfig() });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json', instance: PackageUtil });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json', instance: PackageUtil });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FlagHandler', instance: new FlagHandler() });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FlagHandler', instance: new FlagHandler() });
    }
    catch (error)
    {
