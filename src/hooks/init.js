@@ -1,12 +1,11 @@
 import path                from 'path';
 import os                  from 'os';
 
-import Cosmiconfig         from '@typhonjs-node-utils/cosmiconfig';
 import { ErrorParser }     from '@typhonjs-node-utils/error-parser';
 import PluginManager       from '@typhonjs-plugin/manager';
+import Cosmiconfig         from '@typhonjs-utils/cosmiconfig';
+import FileUtil            from '@typhonjs-utils/file-util/plugin';
 import PackageUtil         from '@typhonjs-utils/package-json';
-
-import FileUtil            from '@typhonjs-node-utils/file-util/plugin';
 
 import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
 
