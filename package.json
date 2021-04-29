@@ -21,11 +21,11 @@
   },
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
-    "@typhonjs-node-utils/cosmiconfig": "typhonjs-node-utils/cosmiconfig",
     "@typhonjs-node-utils/error-parser": "^0.0.3",
     "@typhonjs-node-utils/file-util": "typhonjs-node-utils/file-util",
     "@typhonjs-oclif/errors": "^0.0.0",
     "@typhonjs-plugin/manager": "^0.0.0",
+    "@typhonjs-utils/cosmiconfig": "typhonjs-node-utils/cosmiconfig",
     "@typhonjs-utils/package-json": "^0.0.10",
     "dotenv": "^8.0.0",
     "typhonjs-color-logger": "^0.0.13",
