@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "author": "typhonrt",
   "bugs": "https://github.com/typhonjs-oclif/core/issues",
   "type": "module",
@@ -24,16 +24,15 @@
     "@typhonjs-node-utils/cosmiconfig": "typhonjs-node-utils/cosmiconfig",
     "@typhonjs-node-utils/error-parser": "^0.0.3",
     "@typhonjs-node-utils/file-util": "typhonjs-node-utils/file-util",
-    "@typhonjs-node-utils/package-util": "^0.0.9",
     "@typhonjs-oclif/errors": "^0.0.0",
-    "backbone-esnext-events": "^0.3.0",
+    "@typhonjs-plugin/manager": "^0.0.0",
+    "@typhonjs-utils/package-json": "^0.0.10",
     "dotenv": "^8.0.0",
     "typhonjs-color-logger": "^0.0.13",
-    "typhonjs-file-util": "^0.0.11",
-    "typhonjs-plugin-manager": "^0.2.0"
+    "typhonjs-file-util": "^0.0.11"
   },
   "devDependencies": {
-    "@typhonjs-node-utils/build-test": "^0.1.0"
+    "@typhonjs-utils/build-test": "^0.1.0"
   },
   "engines": {
     "node": ">=14.13.0",

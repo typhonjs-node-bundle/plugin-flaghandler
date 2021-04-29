@@ -3,9 +3,8 @@ import os                  from 'os';
 
 import Cosmiconfig         from '@typhonjs-node-utils/cosmiconfig';
 import { ErrorParser }     from '@typhonjs-node-utils/error-parser';
-import PackageUtil         from '@typhonjs-node-utils/package-util';
-import Events              from 'backbone-esnext-events';
-import PluginManager       from 'typhonjs-plugin-manager';
+import PluginManager       from '@typhonjs-plugin/manager';
+import PackageUtil         from '@typhonjs-utils/package-json';
 
 import FileUtil            from '@typhonjs-node-utils/file-util/plugin';
 
@@ -40,11 +39,11 @@ export default async function(options)
       // A short version of CWD which has the relative path if CWD is the base or subdirectory otherwise absolute.
       globalThis.$$cli_logCWD = '.';
 
-      // Save the global eventbus.
-      globalThis.$$eventbus = new Events();
-
       // Save the global plugin manager
-      globalThis.$$pluginManager = new PluginManager({ eventbus: globalThis.$$eventbus });
+      globalThis.$$pluginManager = new PluginManager();
+
+      // Save the global eventbus.
+      globalThis.$$eventbus = globalThis.$$pluginManager.getEventbus();
 
       // Adds color logger plugin
       globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
@@ -76,7 +75,7 @@ export default async function(options)
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/cosmiconfig', instance: new Cosmiconfig() });
 
-      globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/package-util', instance: PackageUtil });
+      globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json', instance: PackageUtil });
 
       globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
 

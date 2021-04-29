@@ -1,7 +1,6 @@
 import path             from 'path';
 
-// eslint-disable-next-line
-import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
 import FileUtilMod      from 'typhonjs-file-util';
 
@@ -94,12 +93,13 @@ export default class MetaFileHandler
     *
     * @param {object} ev - PluginEvent - The plugin event.
     *
-    * @see https://www.npmjs.com/package/typhonjs-plugin-manager
+    * @see https://www.npmjs.com/package/@typhonjs-plugin/manager
     *
     * @ignore
     */
    static onPluginLoad(ev)
    {
-      ev.eventbus.on(`typhonjs:oclif:system:handler:metafile:write`, MetaFileHandler.writeMetafiles, MetaFileHandler);
+      ev.eventbus.on(`typhonjs:oclif:system:handler:metafile:write`, MetaFileHandler.writeMetafiles,
+       MetaFileHandler, true);
    }
 }

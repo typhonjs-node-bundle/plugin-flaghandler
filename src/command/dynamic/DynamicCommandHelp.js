@@ -1,4 +1,4 @@
-import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
 import Help             from '../../system/help/Help.js';
 

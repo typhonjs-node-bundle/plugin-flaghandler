@@ -3,7 +3,7 @@ import { Errors }          from '@oclif/core';
 import { NonFatalError }   from '@typhonjs-oclif/errors';
 
 import LoggerMod           from 'typhonjs-color-logger';
-import PackageUtil         from '@typhonjs-node-utils/package-util';
+import PackageUtil         from '@typhonjs-utils/package-json';
 
 const logger = LoggerMod.default;
 

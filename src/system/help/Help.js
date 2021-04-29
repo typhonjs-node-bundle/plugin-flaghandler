@@ -3,7 +3,7 @@ import indent           from 'indent-string';
 import stripAnsi        from 'strip-ansi';
 import wrap             from 'wrap-ansi';
 
-import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';
+import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
 import { error }        from '@oclif/core/lib/errors/index.js';
 import CommandHelp      from '@oclif/core/lib/help/command.js';

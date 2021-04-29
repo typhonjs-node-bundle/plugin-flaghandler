@@ -275,7 +275,7 @@ export default class FlagHandler
     *
     * @param {object} ev - PluginEvent - The plugin event.
     *
-    * @see https://www.npmjs.com/package/typhonjs-plugin-manager
+    * @see https://www.npmjs.com/package/@typhonjs-plugin/manager
     *
     * @ignore
     */
@@ -283,8 +283,8 @@ export default class FlagHandler
    {
       const eventbus = ev.eventbus;
 
-      eventbus.on(`typhonjs:oclif:handler:flag:add`, this.addFlags, this);
-      eventbus.on(`typhonjs:oclif:handler:flag:get`, this.getFlags, this);
-      eventbus.on(`typhonjs:oclif:handler:flag:verify`, this.verifyFlags, this);
+      eventbus.on(`typhonjs:oclif:handler:flag:add`, this.addFlags, this, true);
+      eventbus.on(`typhonjs:oclif:handler:flag:get`, this.getFlags, this, true);
+      eventbus.on(`typhonjs:oclif:handler:flag:verify`, this.verifyFlags, this, true);
    }
 }
