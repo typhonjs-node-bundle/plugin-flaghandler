@@ -2,30 +2,25 @@
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
   "version": "0.0.16",
-  "author": "typhonrt",
-  "bugs": "https://github.com/typhonjs-oclif/core/issues",
+  "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",
-  "maintainers": [
-    {
-      "name": "Michael Leahy",
-      "email": "support@typhonjs.io",
-      "url": "https://github.com/typhonrt"
-    }
-  ],
   "exports": {
     ".": "./src/index.js",
     "./DynamicCommandHelp": "./src/command/dynamic/DynamicCommandHelp.js",
     "./hooks/init": "./src/hooks/init.js"
   },
+  "contributors": [
+    "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
+  ],
   "dependencies": {
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
     "@typhonjs-node-utils/error-parser": "^0.0.3",
-    "@typhonjs-node-utils/file-util": "typhonjs-node-utils/file-util",
     "@typhonjs-oclif/errors": "^0.0.0",
     "@typhonjs-plugin/manager": "^0.0.0",
     "@typhonjs-utils/cosmiconfig": "typhonjs-node-utils/cosmiconfig",
+    "@typhonjs-utils/file-util": "typhonjs-node-utils/file-util",
     "@typhonjs-utils/package-json": "^0.0.10",
     "dotenv": "^8.0.0",
     "typhonjs-color-logger": "^0.0.13",
@@ -49,7 +44,8 @@
     "core"
   ],
   "license": "MPL-2.0",
-  "repository": "typhonjs-oclif/core",
+  "bugs": "https://github.com/typhonjs-oclif/core/issues",
+  "repository": "github:typhonjs-oclif/core",
   "scripts": {
     "eslint": "eslint .",
     "prepublishOnly": "npm run eslint"
