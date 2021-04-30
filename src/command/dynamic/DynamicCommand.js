@@ -77,7 +77,7 @@ class DynamicCommand extends Command
          if (globalThis.$$eventbus !== void 0 && Array.isArray(commandData.flagCommands))
          {
             // Dynamically load flags for the command from oclif-flaghandler.
-            flags = globalThis.$$eventbus.triggerSync('typhonjs:oclif:handler:flag:get', {
+            flags = globalThis.$$eventbus.triggerSync('typhonjs:oclif:system:handler:flag:get', {
                commands: commandData.flagCommands
             });
          }
@@ -234,7 +234,7 @@ class DynamicCommand extends Command
       const eventbus = globalThis.$$eventbus;
 
       // Dynamically load flags for the command from oclif-flaghandler.
-      CommandClass.flags = eventbus.triggerSync('typhonjs:oclif:handler:flag:get', { commands });
+      CommandClass.flags = eventbus.triggerSync('typhonjs:oclif:system:handler:flag:get', { commands });
 
       // Perform the first stage of parsing flags. This is
       let { flags } = await this.parse(CommandClass);
@@ -261,7 +261,7 @@ class DynamicCommand extends Command
       flags = await this._loadEnvFile(flags, CommandClass);
 
       // Verify flags given any plugin provided verify functions in FlagHandler.
-      eventbus.triggerSync('typhonjs:oclif:handler:flag:verify', { commands, flags });
+      eventbus.triggerSync('typhonjs:oclif:system:handler:flag:verify', { commands, flags });
 
       // Be sure to log after flags are verified and any log level is set for CWD.
       if (typeof flags.cwd === 'string' && flags.cwd !== '.')

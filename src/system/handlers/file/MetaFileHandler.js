@@ -2,12 +2,10 @@ import path             from 'path';
 
 import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
-import FileUtilMod      from 'typhonjs-file-util';
-
-const FileUtil = FileUtilMod.default;
+import { FileArchive }  from '@typhonjs-utils/file-archive';
 
 /**
- * Provides a few utility functions to walk the local file tree.
+ * Writes out meta files defined in _metaFileData of a command.
  */
 export default class MetaFileHandler
 {
@@ -41,7 +39,7 @@ export default class MetaFileHandler
       const archiveDir = globalThis.$$cli_log_dir;
       const compressFormat = command.config.windows ? 'zip' : 'tar.gz';
 
-      const fileUtil = new FileUtil({ compressFormat, eventbus: globalThis.$$eventbus });
+      const fileArchive = new FileArchive({ compressFormat, eventbus: globalThis.$$eventbus });
 
       const date = new Date();
       const currentTime = date.getTime() - (date.getTimezoneOffset() * 60000);
@@ -51,7 +49,7 @@ export default class MetaFileHandler
 
       globalThis.$$eventbus.trigger('log:info', `Writing metafile logs to: ${archiveFilename}.${compressFormat}`);
 
-      fileUtil.archiveCreate({ filePath: archiveFilename });
+      fileArchive.archiveCreate({ filepath: archiveFilename });
 
       for (let cntr = 0; cntr < metaFileData.length; cntr++)
       {
@@ -79,13 +77,13 @@ export default class MetaFileHandler
          }
 
          // Write out data for given key and filename.
-         fileUtil.writeFile({
-            fileData: JSON.stringify(command[data.key], null, 3),
-            filePath: data.filename
+         fileArchive.writeFile({
+            data: JSON.stringify(command[data.key], null, 3),
+            filepath: data.filename
          });
       }
 
-      return fileUtil.archiveFinalize();
+      return fileArchive.archiveFinalize();
    }
 
    /**

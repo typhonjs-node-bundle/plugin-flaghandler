@@ -72,7 +72,9 @@ export default async function(options)
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-util/plugin' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-archive' });
+
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-util' });
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
 

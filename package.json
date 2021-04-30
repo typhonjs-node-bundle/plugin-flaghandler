@@ -20,11 +20,11 @@
     "@typhonjs-plugin/manager": "^0.0.1",
     "@typhonjs-utils/cosmiconfig": "^0.0.2",
     "@typhonjs-utils/error-parser": "^0.0.7",
-    "@typhonjs-utils/file-util": "typhonjs-node-utils/file-util",
+    "@typhonjs-utils/file-archive": "^0.0.0",
+    "@typhonjs-utils/file-util": "^0.0.1",
     "@typhonjs-utils/logger-color": "^0.0.0",
     "@typhonjs-utils/package-json": "^0.0.10",
-    "dotenv": "^8.0.0",
-    "typhonjs-file-util": "^0.0.11"
+    "dotenv": "^8.0.0"
   },
   "devDependencies": {
     "@typhonjs-utils/build-test": "^0.1.0"
