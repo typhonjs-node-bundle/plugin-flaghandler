@@ -2,10 +2,8 @@ import { Errors }          from '@oclif/core';
 
 import { NonFatalError }   from '@typhonjs-oclif/errors';
 
-import LoggerMod           from 'typhonjs-color-logger';
+import logger              from '@typhonjs-utils/logger-color';
 import PackageUtil         from '@typhonjs-utils/package-json';
-
-const logger = LoggerMod.default;
 
 const s_MESSAGE_ONE_MODULE = `\n
 The source of the error may be associated with the stack trace and module listed below. This may 
