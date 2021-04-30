@@ -2,14 +2,10 @@ import path                from 'path';
 import os                  from 'os';
 
 import PluginManager       from '@typhonjs-plugin/manager';
-import Cosmiconfig         from '@typhonjs-utils/cosmiconfig';
 import { ErrorParser }     from '@typhonjs-utils/error-parser';
-import FileUtil            from '@typhonjs-utils/file-util/plugin';
-import PackageUtil         from '@typhonjs-utils/package-json';
-
-import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
 
 import FlagHandler         from '../system/handlers/flag/FlagHandler.js';
+import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
 
 import defaultLogLevel     from '../data/defaultLogLevel.js';
 
@@ -45,7 +41,7 @@ export default async function(options)
       globalThis.$$eventbus = globalThis.$$pluginManager.getEventbus();
 
       // Adds color logger plugin
-      await globalThis.$$pluginManager.add({ name: 'typhonjs-color-logger', options: { showInfo: false } });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/logger-color' });
 
       await globalThis.$$pluginManager.add({
          name: '@typhonjs-utils/error-parser',
@@ -72,11 +68,11 @@ export default async function(options)
 
       s_SET_VERSION();
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-node-utils/cosmiconfig', instance: new Cosmiconfig() });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/cosmiconfig' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json', instance: PackageUtil });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/FileUtil', instance: FileUtil });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-util/plugin' });
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
 
