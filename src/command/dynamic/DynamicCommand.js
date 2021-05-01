@@ -1,7 +1,7 @@
 import fs                  from 'fs';
 import path                from 'path';
 
-import { Command }         from '@oclif/core';
+import oclif               from '@oclif/core';
 import dotenv              from 'dotenv';
 
 import { NonFatalError }   from '@typhonjs-oclif/errors';
@@ -9,7 +9,7 @@ import { NonFatalError }   from '@typhonjs-oclif/errors';
 /**
  * Provides default handling for TyphonJS dynamic command initialization of flags from Oclif plugins.
  */
-class DynamicCommand extends Command
+class DynamicCommand extends oclif.Command
 {
    /**
     * Performs any final steps before the command execution completes. This is useful for logging any data

@@ -5,18 +5,24 @@ import wrap             from 'wrap-ansi';
 
 import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
-import { error }        from '@oclif/core/lib/errors/index.js';
+import ocErrors         from '@oclif/core/lib/errors/index.js';
 import CommandHelp      from '@oclif/core/lib/help/command.js';
-import { renderList }   from '@oclif/core/lib/help/list.js';
+import ocHelpList       from '@oclif/core/lib/help/list.js';
 import RootHelp         from '@oclif/core/lib/help/root.js';
-import { stdtermwidth } from '@oclif/core/lib/help/screen.js';
+import ocHelpScreen     from '@oclif/core/lib/help/screen.js';
 
-import { compact, sortBy, uniqBy }              from '@oclif/core/lib/util.js';
-import { standarizeIDFromArgv, template }       from '@oclif/core/lib/help/util.js';
+import ocLibUtil        from '@oclif/core/lib/util.js';
+import ocHelpUtil       from '@oclif/core/lib/help/util.js';
 
-export { standarizeIDFromArgv, getHelpClass }   from '@oclif/core/lib/help/util.js';
+const { error } = ocErrors;
+const { renderList } = ocHelpList;
+const { stdtermwidth } = ocHelpScreen;
+const { compact, sortBy, uniqBy } = ocLibUtil;
+const { standarizeIDFromArgv, template, getHelpClass } = ocHelpUtil;
 
 const { bold } = chalk;
+
+export { standarizeIDFromArgv, getHelpClass };
 
 /**
  * @param {string[]} args -

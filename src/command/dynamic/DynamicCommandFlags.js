@@ -1,7 +1,7 @@
 import fs                  from 'fs';
 import path                from 'path';
 
-import { Flags }           from '@oclif/core';
+import oclif               from '@oclif/core';
 
 import { NonFatalError }   from '@typhonjs-oclif/errors';
 
@@ -30,7 +30,7 @@ export default class DynamicCommandFlags
       const envVarPrefix = globalThis.$$cli_env_prefix;
 
       return {
-         'cwd': Flags.string({
+         'cwd': oclif.Flags.string({
             'description': 'Use an alternative working directory.',
             'default': function(context)
             {
@@ -43,9 +43,9 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'env': Flags.string({ 'char': 'e', 'description': 'Name of *.env file to load from `./env`.' }),
+         'env': oclif.Flags.string({ 'char': 'e', 'description': 'Name of *.env file to load from `./env`.' }),
 
-         'loglevel': Flags.string({
+         'loglevel': oclif.Flags.string({
             'description': 'Sets log level (off, fatal, error, warn, info, verbose, debug, trace, all).',
             'default': function(context)
             {
@@ -58,12 +58,12 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'metafile': Flags.boolean({
+         'metafile': oclif.Flags.boolean({
             'description': `Archives CLI runtime metafiles in: ${globalThis.$$cli_log_dir}.`,
             'default': false
          }),
 
-         'no-color': Flags.boolean({
+         'no-color': oclif.Flags.boolean({
             'description': 'Output and log with no color.',
             'default': function(context)
             {
@@ -74,7 +74,7 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'noop': Flags.boolean({
+         'noop': oclif.Flags.boolean({
             'description': 'Prints info on any FVTT module / system detected and exits w/ no operation.',
             'default': false
          })
