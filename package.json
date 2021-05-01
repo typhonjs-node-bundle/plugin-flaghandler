@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "type": "module",
   "main": "src/index.js",
@@ -18,7 +18,7 @@
     "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
     "@typhonjs-oclif/errors": "^0.0.0",
     "@typhonjs-plugin/manager": "^0.0.1",
-    "@typhonjs-utils/cosmiconfig": "^0.0.2",
+    "@typhonjs-utils/cosmiconfig": "^0.0.3",
     "@typhonjs-utils/error-parser": "^0.0.7",
     "@typhonjs-utils/file-archive": "^0.0.0",
     "@typhonjs-utils/file-util": "^0.0.1",
