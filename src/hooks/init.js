@@ -70,7 +70,7 @@ export default async function(options)
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/cosmiconfig' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json/plugin' });
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-archive' });
 

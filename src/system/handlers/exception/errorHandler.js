@@ -1,9 +1,9 @@
-import oclif               from '@oclif/core';
+import oclif                     from '@oclif/core';
 
-import { NonFatalError }   from '@typhonjs-oclif/errors';
+import { NonFatalError }         from '@typhonjs-oclif/errors';
 
-import logger              from '@typhonjs-utils/logger-color';
-import PackageUtil         from '@typhonjs-utils/package-json';
+import logger                    from '@typhonjs-utils/logger-color';
+import { getPackageAndFormat }   from '@typhonjs-utils/package-json';
 
 const s_MESSAGE_ONE_MODULE = `\n
 The source of the error may be associated with the stack trace and module listed below. This may 
@@ -76,13 +76,13 @@ export default function errorHandler(error, processExit = true)
       if (prettyPrint)
       {
          // Attempt to find the `package.json` from first file path in the normalized error.
-         const normalizedPackageObj = PackageUtil.getPackageAndFormat({
+         const normalizedPackageObj = getPackageAndFormat({
             filepath: normalizedError.firstFilepath,
             callback: (data) => typeof data.packageObj.name === 'string'
          });
 
          // Attempt to find the `package.json` from first file path in the filtered error (likely source of error).
-         const filterPackageObj = PackageUtil.getPackageAndFormat({
+         const filterPackageObj = getPackageAndFormat({
             filepath: filterError.firstFilepath,
             callback: (data) => typeof data.packageObj.name === 'string'
          });

@@ -15,7 +15,7 @@
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
   ],
   "dependencies": {
-    "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm.git",
+    "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm-all.git",
     "@typhonjs-oclif/errors": "^0.0.0",
     "@typhonjs-plugin/manager": "^0.0.1",
     "@typhonjs-utils/cosmiconfig": "^0.0.3",
@@ -23,14 +23,14 @@
     "@typhonjs-utils/file-archive": "^0.0.0",
     "@typhonjs-utils/file-util": "^0.0.1",
     "@typhonjs-utils/logger-color": "^0.0.0",
-    "@typhonjs-utils/package-json": "^0.0.10",
+    "@typhonjs-utils/package-json": "^0.4.0",
     "dotenv": "^8.0.0"
   },
   "devDependencies": {
     "@typhonjs-utils/build-test": "^0.1.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=14"
   },
   "files": [
     "/npm-shrinkwrap.json",
