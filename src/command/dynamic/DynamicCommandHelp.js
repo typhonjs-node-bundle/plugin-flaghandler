@@ -1,11 +1,11 @@
 import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
-import Help             from '../../system/help/Help.js';
+import oclif            from '@oclif/core';
 
 /**
  * Provides functionality to load flags from DynamicCommand asynchronously so that they appear in help.
  */
-export default class DynamicCommandHelp extends Help
+export default class DynamicCommandHelp extends oclif.Help
 {
    /**
     * @param {Interfaces.Command} commandConfig - The command config to be loaded.
