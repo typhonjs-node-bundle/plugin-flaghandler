@@ -9,7 +9,9 @@
   "exports": {
     ".": "./src/index.js",
     "./DynamicCommandHelp": "./src/command/dynamic/DynamicCommandHelp.js",
-    "./hooks/init": "./src/hooks/init.js"
+    "./hooks/init": "./src/hooks/init.js",
+    "./package.json": "./package.json",
+    "./types": "./types/index.d.ts"
   },
   "contributors": [
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
@@ -27,14 +29,18 @@
     "dotenv": "^8.0.0"
   },
   "devDependencies": {
-    "@typhonjs-utils/build-test": "^0.1.0"
+    "@typhonjs-utils/build-test": "^0.1.0",
+    "rollup": "^2",
+    "rollup-plugin-dts": "^3.0.0"
   },
   "engines": {
     "node": ">=14"
   },
+  "types": "./types/index.d.ts",
   "files": [
     "/npm-shrinkwrap.json",
-    "/src"
+    "/src",
+    "/types"
   ],
   "homepage": "https://github.com/typhonjs-oclif/core#readme",
   "keywords": [
@@ -47,6 +53,7 @@
   "repository": "github:typhonjs-oclif/core",
   "scripts": {
     "eslint": "eslint .",
-    "prepublishOnly": "npm run eslint"
+    "prepublishOnly": "npm run eslint",
+    "types": "npx -p typescript tsc --project tsconfig.types.json && rollup --config rollup.config.types.js"
   }
 }
