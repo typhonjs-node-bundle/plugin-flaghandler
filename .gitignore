@@ -5,6 +5,7 @@ npm-debug.log
 *-error.log
 /.nyc_output
 /test/deploy
+/lib
 /dist
 /tmp
 /yarn.lock
