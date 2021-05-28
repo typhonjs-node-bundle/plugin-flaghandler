@@ -15,7 +15,7 @@
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
   ],
   "dependencies": {
-    "@oclif/core": "git+https://github.com/typhonjs-oclif/core-esm-all.git",
+    "@oclif/core": "^0.5.0",
     "@typhonjs-oclif/errors": "^0.0.0",
     "@typhonjs-plugin/manager": "^0.0.1",
     "@typhonjs-utils/cosmiconfig": "^0.0.3",
