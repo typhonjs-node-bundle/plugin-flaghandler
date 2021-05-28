@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-oclif/core",
   "description": "Provides TyphonJS extensions to building Oclif CLIs.",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "type": "module",
   "main": "src/index.js",
