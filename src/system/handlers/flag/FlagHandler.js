@@ -277,7 +277,6 @@ export default class FlagHandler
     * @param {object} ev - PluginEvent - The plugin event.
     *
     * @see https://www.npmjs.com/package/@typhonjs-plugin/manager
-    *
     * @ignore
     */
    onPluginLoad(ev)
