@@ -25,7 +25,7 @@
     "@typhonjs-utils/file-archive": "^0.0.2",
     "@typhonjs-utils/file-util": "^0.0.2",
     "@typhonjs-utils/logger-color": "^0.0.1",
-    "@typhonjs-utils/package-json": "^0.5.0",
+    "@typhonjs-utils/package-json": "^0.6.0",
     "dotenv": "^8.0.0"
   },
   "devDependencies": {
