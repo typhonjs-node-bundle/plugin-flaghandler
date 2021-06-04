@@ -98,6 +98,6 @@ export default class MetaFileHandler
    static onPluginLoad(ev)
    {
       ev.eventbus.on(`typhonjs:oclif:system:handler:metafile:write`, MetaFileHandler.writeMetafiles,
-       MetaFileHandler, true);
+       MetaFileHandler, { guard: true });
    }
 }

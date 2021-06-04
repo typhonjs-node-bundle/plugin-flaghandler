@@ -284,8 +284,8 @@ export default class FlagHandler
    {
       const eventbus = ev.eventbus;
 
-      eventbus.on(`typhonjs:oclif:system:handler:flag:add`, this.addFlags, this, true);
-      eventbus.on(`typhonjs:oclif:system:handler:flag:get`, this.getFlags, this, true);
-      eventbus.on(`typhonjs:oclif:system:handler:flag:verify`, this.verifyFlags, this, true);
+      eventbus.on(`typhonjs:oclif:system:handler:flag:add`, this.addFlags, this, { guard: true });
+      eventbus.on(`typhonjs:oclif:system:handler:flag:get`, this.getFlags, this, { guard: true });
+      eventbus.on(`typhonjs:oclif:system:handler:flag:verify`, this.verifyFlags, this, { guard: true });
    }
 }
