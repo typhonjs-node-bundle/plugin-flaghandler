@@ -2,7 +2,7 @@ import path             from 'path';
 
 import * as Interfaces  from '@oclif/core/lib/interfaces/index.js';  // eslint-disable-line no-unused-vars
 
-import { FileArchive }  from '@typhonjs-utils/file-archive';
+import FileArchive      from '@typhonjs-utils/file-archive';
 
 /**
  * Writes out meta files defined in _metaFileData of a command.

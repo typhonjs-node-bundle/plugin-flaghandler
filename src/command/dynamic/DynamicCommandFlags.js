@@ -30,9 +30,9 @@ export default class DynamicCommandFlags
       const envVarPrefix = globalThis.$$cli_env_prefix;
 
       return {
-         'cwd': oclif.Flags.string({
-            'description': 'Use an alternative working directory.',
-            'default': function(context)
+         cwd: oclif.Flags.string({
+            description: 'Use an alternative working directory.',
+            default: function(context)
             {
                const envVars = context === null ? {} : process.env;
                const envVar = `${envVarPrefix}_CWD`;
@@ -43,11 +43,11 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'env': oclif.Flags.string({ 'char': 'e', 'description': 'Name of *.env file to load from `./env`.' }),
+         env: oclif.Flags.string({ char: 'e', description: 'Name of *.env file to load from `./env`.' }),
 
-         'loglevel': oclif.Flags.string({
-            'description': 'Sets log level (off, fatal, error, warn, info, verbose, debug, trace, all).',
-            'default': function(context)
+         loglevel: oclif.Flags.string({
+            description: 'Sets log level (off, fatal, error, warn, info, verbose, debug, trace, all).',
+            default: function(context)
             {
                const envVars = context === null ? {} : process.env;
                const envVar = `${envVarPrefix}_LOG_LEVEL`;
@@ -58,14 +58,14 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'metafile': oclif.Flags.boolean({
-            'description': `Archives CLI runtime metafiles in: ${globalThis.$$cli_log_dir}.`,
-            'default': false
+         metafile: oclif.Flags.boolean({
+            description: `Archives CLI runtime metafiles in: ${globalThis.$$cli_log_dir}.`,
+            default: false
          }),
 
          'no-color': oclif.Flags.boolean({
-            'description': 'Output and log with no color.',
-            'default': function(context)
+            description: 'Output and log with no color.',
+            default: function(context)
             {
                const envVars = context === null ? {} : process.env;
                const envVar = `${envVarPrefix}_NO_COLOR`;
@@ -74,9 +74,9 @@ export default class DynamicCommandFlags
             }
          }),
 
-         'noop': oclif.Flags.boolean({
-            'description': 'Prints info on any FVTT module / system detected and exits w/ no operation.',
-            'default': false
+         noop: oclif.Flags.boolean({
+            description: 'Prints info on any FVTT module / system detected and exits w/ no operation.',
+            default: false
          })
       };
    }

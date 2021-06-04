@@ -2,7 +2,7 @@ import path                from 'path';
 import os                  from 'os';
 
 import PluginManager       from '@typhonjs-plugin/manager';
-import { ErrorParser }     from '@typhonjs-utils/error-parser';
+import ErrorParser         from '@typhonjs-utils/error-parser';
 
 import FlagHandler         from '../system/handlers/flag/FlagHandler.js';
 import MetaFileHandler     from '../system/handlers/file/MetaFileHandler.js';
@@ -41,7 +41,7 @@ export default async function(options)
       globalThis.$$eventbus = globalThis.$$pluginManager.getEventbus();
 
       // Adds color logger plugin
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/logger-color' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/logger-color/plugin' });
 
       await globalThis.$$pluginManager.add({
          name: '@typhonjs-utils/error-parser',
@@ -68,13 +68,13 @@ export default async function(options)
 
       s_SET_VERSION();
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/cosmiconfig' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/cosmiconfig/plugin' });
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/package-json/plugin' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-archive' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-archive/plugin' });
 
-      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-util' });
+      await globalThis.$$pluginManager.add({ name: '@typhonjs-utils/file-util/plugin' });
 
       await globalThis.$$pluginManager.add({ name: '@typhonjs-oclif/core/MetaFileHandler', instance: MetaFileHandler });
 

@@ -22,6 +22,7 @@ export default class FlagHandler
        * Stores flags and a potential verify function broken down by command name -> plugin name -> { flags, verify }
        *
        * @type {{command_name: {plugin_name: {flags: {}, verify: Function}}}}
+       *
        * @private
        */
       this._database = {};

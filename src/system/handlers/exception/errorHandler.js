@@ -2,7 +2,7 @@ import oclif                     from '@oclif/core';
 
 import { NonFatalError }         from '@typhonjs-oclif/errors';
 
-import logger                    from '@typhonjs-utils/logger-color';
+import logger                    from '@typhonjs-utils/logger-color/plugin';
 import { getPackageAndFormat }   from '@typhonjs-utils/package-json';
 
 const s_MESSAGE_ONE_MODULE = `\n
